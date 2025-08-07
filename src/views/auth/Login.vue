@@ -156,18 +156,20 @@ const handleLogin = async () => {
 <style scoped>
 .login-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, 
-    #1B5E20 0%, 
-    #2E7D32 25%, 
-    #4CAF50 50%, 
-    #66BB6A 75%, 
-    #81C784 100%);
+  background: linear-gradient(
+    135deg,
+    #1b5e20 0%,
+    #2e7d32 25%,
+    #4caf50 50%,
+    #66bb6a 75%,
+    #81c784 100%
+  );
   position: relative;
   overflow: hidden;
 }
 
 .login-container::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   left: -50%;
@@ -179,8 +181,12 @@ const handleLogin = async () => {
 }
 
 @keyframes float {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
 .login-card {
@@ -191,13 +197,17 @@ const handleLogin = async () => {
 }
 
 .login-header {
-  background: linear-gradient(135deg, rgba(241, 248, 233, 0.8), rgba(232, 245, 232, 0.9));
+  background: linear-gradient(
+    135deg,
+    rgba(241, 248, 233, 0.8),
+    rgba(232, 245, 232, 0.9)
+  );
   border-radius: 16px 16px 0 0;
   position: relative;
 }
 
 .login-header::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -229,11 +239,11 @@ const handleLogin = async () => {
     margin: 16px;
     border-radius: 20px;
   }
-  
+
   .login-header {
     padding: 24px !important;
   }
-  
+
   .v-card-text {
     padding: 24px !important;
   }
@@ -250,13 +260,13 @@ const handleLogin = async () => {
 }
 
 .v-text-field--focused .v-field {
-  border-color: #4CAF50;
+  border-color: #4caf50;
   box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
 }
 
 /* Button enhancements */
 .v-btn {
-  background: linear-gradient(135deg, #4CAF50, #66BB6A) !important;
+  background: linear-gradient(135deg, #4caf50, #66bb6a) !important;
   box-shadow: 0 4px 16px rgba(76, 175, 80, 0.3);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }

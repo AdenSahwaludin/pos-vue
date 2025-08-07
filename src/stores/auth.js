@@ -32,7 +32,11 @@ export const useAuthStore = defineStore("auth", () => {
   const isAuthenticated = computed(() => !!user.value);
   const isAdmin = computed(() => {
     const result = user.value?.role === "admin";
-    console.log("isAdmin check:", { user: user.value, role: user.value?.role, isAdmin: result });
+    console.log("isAdmin check:", {
+      user: user.value,
+      role: user.value?.role,
+      isAdmin: result,
+    });
     return result;
   });
   const isKasir = computed(() => user.value?.role === "kasir");
@@ -59,7 +63,7 @@ export const useAuthStore = defineStore("auth", () => {
           email: firebaseUser.email,
           ...userDoc.data(),
         };
-        
+
         user.value = userData;
         localStorage.setItem("user", JSON.stringify(userData));
 

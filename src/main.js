@@ -54,7 +54,7 @@ const vuetify = createVuetify({
       },
     },
     variations: {
-      colors: ['primary', 'secondary', 'accent'],
+      colors: ["primary", "secondary", "accent"],
       lighten: 3,
       darken: 3,
     },
@@ -62,24 +62,24 @@ const vuetify = createVuetify({
   defaults: {
     VCard: {
       elevation: 2,
-      rounded: 'lg',
+      rounded: "lg",
     },
     VBtn: {
-      rounded: 'lg',
-      style: 'text-transform: none; font-weight: 500;',
+      rounded: "lg",
+      style: "text-transform: none; font-weight: 500;",
     },
     VTextField: {
-      variant: 'outlined',
-      density: 'comfortable',
-      color: 'primary',
+      variant: "outlined",
+      density: "comfortable",
+      color: "primary",
     },
     VSelect: {
-      variant: 'outlined',
-      density: 'comfortable',
-      color: 'primary',
+      variant: "outlined",
+      density: "comfortable",
+      color: "primary",
     },
     VDataTable: {
-      density: 'comfortable',
+      density: "comfortable",
     },
   },
 });

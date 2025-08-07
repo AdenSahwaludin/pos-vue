@@ -9,15 +9,21 @@
               <v-icon size="32" color="white">mdi-view-dashboard</v-icon>
             </div>
             <div class="ml-4">
-              <h1 class="text-h4 font-weight-bold text-white mb-1">Dashboard</h1>
+              <h1 class="text-h4 font-weight-bold text-white mb-1">
+                Dashboard
+              </h1>
               <div class="text-subtitle-1 text-white opacity-90">
-                Selamat datang, {{ authStore.user?.email || 'Pengguna' }}
+                Selamat datang, {{ authStore.user?.email || "Pengguna" }}
               </div>
             </div>
             <v-spacer></v-spacer>
             <div class="text-right">
-              <div class="text-caption text-white opacity-80">{{ currentDate }}</div>
-              <div class="text-h6 text-white font-weight-bold">{{ currentTime }}</div>
+              <div class="text-caption text-white opacity-80">
+                {{ currentDate }}
+              </div>
+              <div class="text-h6 text-white font-weight-bold">
+                {{ currentTime }}
+              </div>
             </div>
           </div>
         </v-card-text>
@@ -34,7 +40,9 @@
                 <v-icon color="white" size="28">mdi-currency-usd</v-icon>
               </div>
               <div class="ml-3 flex-grow-1">
-                <div class="text-body-2 text-medium-emphasis">Penjualan Hari Ini</div>
+                <div class="text-body-2 text-medium-emphasis">
+                  Penjualan Hari Ini
+                </div>
                 <div class="text-h5 font-weight-bold text-primary">
                   Rp {{ formatCurrency(todaySales) }}
                 </div>
@@ -52,7 +60,9 @@
                 <v-icon color="white" size="28">mdi-receipt</v-icon>
               </div>
               <div class="ml-3 flex-grow-1">
-                <div class="text-body-2 text-medium-emphasis">Transaksi Hari Ini</div>
+                <div class="text-body-2 text-medium-emphasis">
+                  Transaksi Hari Ini
+                </div>
                 <div class="text-h5 font-weight-bold text-success">
                   {{ todayTransactionsCount }}
                 </div>
@@ -70,7 +80,9 @@
                 <v-icon color="white" size="28">mdi-alert</v-icon>
               </div>
               <div class="ml-3 flex-grow-1">
-                <div class="text-body-2 text-medium-emphasis">Produk Stok Rendah</div>
+                <div class="text-body-2 text-medium-emphasis">
+                  Produk Stok Rendah
+                </div>
                 <div class="text-h5 font-weight-bold text-warning">
                   {{ lowStockCount }}
                 </div>
@@ -109,11 +121,13 @@
               <div class="section-icon primary-gradient">
                 <v-icon color="white" size="20">mdi-clock-outline</v-icon>
               </div>
-              <span class="ml-3 text-h6 font-weight-bold">Transaksi Terbaru</span>
+              <span class="ml-3 text-h6 font-weight-bold"
+                >Transaksi Terbaru</span
+              >
               <v-spacer></v-spacer>
-              <v-btn 
-                variant="text" 
-                color="primary" 
+              <v-btn
+                variant="text"
+                color="primary"
                 @click="$router.push('/transactions')"
                 class="rounded-lg"
               >
@@ -122,7 +136,7 @@
               </v-btn>
             </div>
           </v-card-title>
-          
+
           <v-card-text class="pa-0">
             <v-data-table
               :headers="transactionHeaders"
@@ -132,7 +146,9 @@
               hide-default-footer
             >
               <template v-slot:item.id="{ item }">
-                <span class="font-weight-medium text-primary">{{ item.id }}</span>
+                <span class="font-weight-medium text-primary">{{
+                  item.id
+                }}</span>
               </template>
 
               <template v-slot:item.total="{ item }">
@@ -146,9 +162,9 @@
               </template>
 
               <template v-slot:item.status="{ item }">
-                <v-chip 
-                  :color="getStatusColor(item.status)" 
-                  size="small" 
+                <v-chip
+                  :color="getStatusColor(item.status)"
+                  size="small"
                   variant="elevated"
                   class="font-weight-medium"
                 >
@@ -232,10 +248,10 @@
         </v-card>
 
         <!-- Low Stock Alert -->
-        <v-card 
-          v-if="lowStockProducts.length > 0" 
-          class="glass-effect low-stock-alert" 
-          rounded="xl" 
+        <v-card
+          v-if="lowStockProducts.length > 0"
+          class="glass-effect low-stock-alert"
+          rounded="xl"
           elevation="8"
         >
           <v-card-title class="pb-2">
@@ -244,7 +260,9 @@
                 <v-icon color="white" size="20">mdi-alert</v-icon>
               </div>
               <div class="ml-3">
-                <div class="text-h6 font-weight-bold">Peringatan Stok Rendah</div>
+                <div class="text-h6 font-weight-bold">
+                  Peringatan Stok Rendah
+                </div>
                 <div class="text-caption text-medium-emphasis">
                   {{ lowStockProducts.length }} produk perlu diperhatikan
                 </div>
@@ -270,7 +288,9 @@
                         :alt="product.nama"
                       >
                         <template v-slot:placeholder>
-                          <v-icon size="18" color="warning">mdi-package-variant</v-icon>
+                          <v-icon size="18" color="warning"
+                            >mdi-package-variant</v-icon
+                          >
                         </template>
                       </v-img>
                     </v-avatar>
@@ -417,12 +437,20 @@ onUnmounted(() => {
 <style scoped>
 .dashboard-container {
   padding: 0;
-  background: linear-gradient(135deg, rgba(245, 245, 245, 0.1), rgba(238, 238, 238, 0.05));
+  background: linear-gradient(
+    135deg,
+    rgba(245, 245, 245, 0.1),
+    rgba(238, 238, 238, 0.05)
+  );
   min-height: calc(100vh - 64px);
 }
 
 .dashboard-header {
-  background: linear-gradient(135deg, rgba(46, 125, 50, 0.05), rgba(85, 139, 47, 0.02));
+  background: linear-gradient(
+    135deg,
+    rgba(46, 125, 50, 0.05),
+    rgba(85, 139, 47, 0.02)
+  );
   border-radius: 20px;
   padding: 8px;
 }
@@ -455,19 +483,19 @@ onUnmounted(() => {
 }
 
 .primary-gradient {
-  background: linear-gradient(135deg, #2E7D32, #388E3C);
+  background: linear-gradient(135deg, #2e7d32, #388e3c);
 }
 
 .success-gradient {
-  background: linear-gradient(135deg, #388E3C, #4CAF50);
+  background: linear-gradient(135deg, #388e3c, #4caf50);
 }
 
 .warning-gradient {
-  background: linear-gradient(135deg, #F57C00, #FF9800);
+  background: linear-gradient(135deg, #f57c00, #ff9800);
 }
 
 .info-gradient {
-  background: linear-gradient(135deg, #0288D1, #03A9F4);
+  background: linear-gradient(135deg, #0288d1, #03a9f4);
 }
 
 .section-icon {
@@ -514,7 +542,11 @@ onUnmounted(() => {
 
 .low-stock-alert {
   border: 1px solid rgba(255, 152, 0, 0.2);
-  background: linear-gradient(135deg, rgba(255, 243, 224, 0.8), rgba(255, 248, 225, 0.6));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 243, 224, 0.8),
+    rgba(255, 248, 225, 0.6)
+  );
 }
 
 .low-stock-container {
@@ -555,7 +587,7 @@ onUnmounted(() => {
 }
 
 .herbal-gradient {
-  background: linear-gradient(135deg, #2E7D32, #388E3C, #4CAF50);
+  background: linear-gradient(135deg, #2e7d32, #388e3c, #4caf50);
   color: white;
 }
 
@@ -564,25 +596,25 @@ onUnmounted(() => {
   .dashboard-container {
     padding: 16px 8px;
   }
-  
+
   .dashboard-header .v-card-text {
     padding: 20px !important;
   }
-  
+
   .dashboard-icon {
     padding: 8px;
   }
-  
+
   .stats-icon {
     width: 40px;
     height: 40px;
   }
-  
+
   .section-icon {
     width: 32px;
     height: 32px;
   }
-  
+
   .quick-action-btn {
     font-size: 0.875rem;
   }
@@ -592,15 +624,15 @@ onUnmounted(() => {
   .dashboard-header .text-h4 {
     font-size: 1.5rem !important;
   }
-  
+
   .stats-card .v-card-text {
     padding: 16px !important;
   }
-  
+
   .stats-card .text-h5 {
     font-size: 1.2rem !important;
   }
-  
+
   .modern-table {
     font-size: 0.875rem;
   }

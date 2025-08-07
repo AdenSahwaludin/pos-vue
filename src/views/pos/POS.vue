@@ -4,8 +4,12 @@
     <div class="d-md-none mb-4">
       <v-card class="glass-effect" rounded="xl">
         <v-card-title class="text-center py-3">
-          <v-icon color="primary" size="24" class="mr-2">mdi-cash-register</v-icon>
-          <span class="text-h6 font-weight-bold text-primary">Point of Sale</span>
+          <v-icon color="primary" size="24" class="mr-2"
+            >mdi-cash-register</v-icon
+          >
+          <span class="text-h6 font-weight-bold text-primary"
+            >Point of Sale</span
+          >
         </v-card-title>
       </v-card>
     </div>
@@ -14,7 +18,9 @@
     <v-row class="d-none d-md-flex">
       <v-col cols="12">
         <div class="d-flex align-center mb-4">
-          <v-icon size="32" color="primary" class="mr-3">mdi-cash-register</v-icon>
+          <v-icon size="32" color="primary" class="mr-3"
+            >mdi-cash-register</v-icon
+          >
           <h1 class="text-h4">Point of Sale</h1>
         </div>
       </v-col>
@@ -30,7 +36,7 @@
               <v-icon class="mr-2" color="primary">mdi-package-variant</v-icon>
               <span class="text-h6 font-weight-bold">Pilih Produk</span>
               <v-spacer></v-spacer>
-              
+
               <!-- Search Field -->
               <v-text-field
                 v-model="searchQuery"
@@ -40,7 +46,7 @@
                 density="compact"
                 hide-details
                 :style="{
-                  'max-width': $vuetify.display.mobile ? '200px' : '300px'
+                  'max-width': $vuetify.display.mobile ? '200px' : '300px',
                 }"
                 class="rounded-lg"
                 clearable
@@ -51,20 +57,20 @@
           <v-card-text class="pt-0">
             <!-- Category Filter with enhanced chips -->
             <div class="mb-4">
-              <v-chip-group 
-                v-model="selectedCategory" 
+              <v-chip-group
+                v-model="selectedCategory"
                 class="category-chips"
                 show-arrows
               >
-                <v-chip 
-                  :value="null" 
-                  variant="tonal" 
+                <v-chip
+                  :value="null"
+                  variant="tonal"
                   color="primary"
                   class="rounded-pill font-weight-medium"
                   filter
-                > 
+                >
                   <v-icon start>mdi-view-grid</v-icon>
-                  Semua 
+                  Semua
                 </v-chip>
                 <v-chip
                   v-for="category in productStore.categories"
@@ -89,7 +95,7 @@
                 class="product-card"
                 :class="{
                   'product-card--out-of-stock': product.stok <= 0,
-                  'product-card--clickable': product.stok > 0
+                  'product-card--clickable': product.stok > 0,
                 }"
                 @click="product.stok > 0 && addToCart(product)"
                 :disabled="product.stok <= 0"
@@ -105,11 +111,15 @@
                     class="product-image"
                   >
                     <template v-slot:placeholder>
-                      <div class="d-flex align-center justify-center fill-height">
-                        <v-icon size="48" color="grey-lighten-2">mdi-image</v-icon>
+                      <div
+                        class="d-flex align-center justify-center fill-height"
+                      >
+                        <v-icon size="48" color="grey-lighten-2"
+                          >mdi-image</v-icon
+                        >
                       </div>
                     </template>
-                    
+
                     <!-- Stock Status Badge -->
                     <v-chip
                       v-if="product.stok <= 0"
@@ -138,13 +148,18 @@
                 </v-card-title>
 
                 <v-card-text class="pt-0">
-                  <div class="product-price text-h6 text-primary font-weight-bold">
+                  <div
+                    class="product-price text-h6 text-primary font-weight-bold"
+                  >
                     Rp {{ formatCurrency(product.harga) }}
                   </div>
                   <div class="product-stock text-body-2 text-medium-emphasis">
                     Stok: {{ product.stok }}
                   </div>
-                  <div v-if="product.nomor_bpom" class="text-caption text-medium-emphasis">
+                  <div
+                    v-if="product.nomor_bpom"
+                    class="text-caption text-medium-emphasis"
+                  >
                     BPOM: {{ product.nomor_bpom }}
                   </div>
                 </v-card-text>
@@ -171,7 +186,12 @@
 
       <!-- Cart -->
       <v-col cols="12" md="4">
-        <v-card class="cart-card glass-effect" sticky rounded="xl" elevation="8">
+        <v-card
+          class="cart-card glass-effect"
+          sticky
+          rounded="xl"
+          elevation="8"
+        >
           <!-- Cart Header -->
           <v-card-title class="cart-header pb-2">
             <div class="d-flex align-center w-100">
@@ -181,7 +201,9 @@
               <div class="ml-3">
                 <div class="text-h6 font-weight-bold text-white">Keranjang</div>
                 <div class="text-caption text-white opacity-90">
-                  {{ transactionStore.cartItemCount }} item{{ transactionStore.cartItemCount !== 1 ? 's' : '' }}
+                  {{ transactionStore.cartItemCount }} item{{
+                    transactionStore.cartItemCount !== 1 ? "s" : ""
+                  }}
                 </div>
               </div>
               <v-spacer></v-spacer>
@@ -199,16 +221,23 @@
 
           <!-- Cart Items -->
           <v-card-text class="pa-0">
-            <div class="cart-items-container" style="max-height: 400px; overflow-y: auto;">
+            <div
+              class="cart-items-container"
+              style="max-height: 400px; overflow-y: auto"
+            >
               <!-- Empty Cart State -->
               <div
                 v-if="transactionStore.cart.length === 0"
                 class="empty-cart-state text-center pa-6"
               >
                 <div class="empty-cart-icon">
-                  <v-icon size="64" color="primary" class="mb-3">mdi-cart-outline</v-icon>
+                  <v-icon size="64" color="primary" class="mb-3"
+                    >mdi-cart-outline</v-icon
+                  >
                 </div>
-                <div class="text-h6 text-medium-emphasis mb-2">Keranjang Kosong</div>
+                <div class="text-h6 text-medium-emphasis mb-2">
+                  Keranjang Kosong
+                </div>
                 <div class="text-body-2 text-medium-emphasis">
                   Pilih produk untuk memulai transaksi
                 </div>
@@ -232,21 +261,26 @@
                           :alt="item.nama"
                         >
                           <template v-slot:placeholder>
-                            <v-icon size="24" color="primary">mdi-package-variant</v-icon>
+                            <v-icon size="24" color="primary"
+                              >mdi-package-variant</v-icon
+                            >
                           </template>
                         </v-img>
                       </v-avatar>
 
                       <!-- Product Info -->
                       <div class="flex-grow-1 ml-3">
-                        <div class="text-subtitle-2 font-weight-bold text-primary">
+                        <div
+                          class="text-subtitle-2 font-weight-bold text-primary"
+                        >
                           {{ item.nama }}
                         </div>
                         <div class="text-body-2 text-medium-emphasis">
                           Rp {{ formatCurrency(item.harga_satuan) }} /item
                         </div>
                         <div class="text-body-2 font-weight-bold text-success">
-                          Subtotal: Rp {{ formatCurrency(item.harga_satuan * item.jumlah) }}
+                          Subtotal: Rp
+                          {{ formatCurrency(item.harga_satuan * item.jumlah) }}
                         </div>
                       </div>
                     </div>
@@ -259,7 +293,9 @@
                           variant="outlined"
                           size="x-small"
                           color="primary"
-                          @click="updateQuantity(item.product_id, item.jumlah - 1)"
+                          @click="
+                            updateQuantity(item.product_id, item.jumlah - 1)
+                          "
                           :disabled="item.jumlah <= 1"
                           class="quantity-btn"
                         >
@@ -280,7 +316,9 @@
                           variant="outlined"
                           size="x-small"
                           color="primary"
-                          @click="updateQuantity(item.product_id, item.jumlah + 1)"
+                          @click="
+                            updateQuantity(item.product_id, item.jumlah + 1)
+                          "
                           :disabled="item.jumlah >= item.stok_tersedia"
                           class="quantity-btn"
                         >
@@ -580,9 +618,9 @@ const fetchCustomers = async () => {
   try {
     loadingCustomers.value = true;
     const querySnapshot = await getDocs(collection(db, "customers"));
-    customers.value = querySnapshot.docs.map(doc => ({
+    customers.value = querySnapshot.docs.map((doc) => ({
       id: doc.id,
-      ...doc.data()
+      ...doc.data(),
     }));
   } catch (error) {
     console.error("Error fetching customers:", error);
@@ -665,8 +703,8 @@ const processPayment = async () => {
 
 const printReceipt = () => {
   const cartItems = transactionStore.cart;
-  const customer = customers.value.find(c => c.id === selectedCustomer.value);
-  
+  const customer = customers.value.find((c) => c.id === selectedCustomer.value);
+
   // Prepare receipt content
   const receiptContent = `
     <!DOCTYPE html>
@@ -771,17 +809,23 @@ const printReceipt = () => {
         </div>
         <div class="info-row">
           <span>Tanggal:</span>
-          <span>${new Date().toLocaleDateString('id-ID')} ${new Date().toLocaleTimeString('id-ID')}</span>
+          <span>${new Date().toLocaleDateString(
+            "id-ID"
+          )} ${new Date().toLocaleTimeString("id-ID")}</span>
         </div>
         <div class="info-row">
           <span>Kasir:</span>
           <span>Admin</span>
         </div>
-        ${customer ? `
+        ${
+          customer
+            ? `
         <div class="info-row">
           <span>Pelanggan:</span>
           <span>${customer.nama}</span>
-        </div>` : ''}
+        </div>`
+            : ""
+        }
       </div>
 
       <div class="items-table">
@@ -790,7 +834,9 @@ const printReceipt = () => {
           <div class="item-qty">Qty</div>
           <div class="item-price">Harga</div>
         </div>
-        ${cartItems.map(item => `
+        ${cartItems
+          .map(
+            (item) => `
         <div class="item-row">
           <div class="item-name">${item.nama}</div>
           <div class="item-qty">${item.jumlah}</div>
@@ -799,9 +845,13 @@ const printReceipt = () => {
         <div class="item-row" style="font-size: 10px; color: #666;">
           <div class="item-name">@ Rp ${formatCurrency(item.harga_satuan)}</div>
           <div class="item-qty"></div>
-          <div class="item-price">Rp ${formatCurrency(item.harga_satuan * item.jumlah)}</div>
+          <div class="item-price">Rp ${formatCurrency(
+            item.harga_satuan * item.jumlah
+          )}</div>
         </div>
-        `).join('')}
+        `
+          )
+          .join("")}
       </div>
 
       <div class="total-section">
@@ -809,16 +859,24 @@ const printReceipt = () => {
           <span>Subtotal:</span>
           <span>Rp ${formatCurrency(transactionStore.cartTotal)}</span>
         </div>
-        ${discount.value > 0 ? `
+        ${
+          discount.value > 0
+            ? `
         <div class="total-row">
           <span>Diskon:</span>
           <span>- Rp ${formatCurrency(discount.value)}</span>
-        </div>` : ''}
-        ${tax.value > 0 ? `
+        </div>`
+            : ""
+        }
+        ${
+          tax.value > 0
+            ? `
         <div class="total-row">
           <span>Pajak:</span>
           <span>Rp ${formatCurrency(tax.value)}</span>
-        </div>` : ''}
+        </div>`
+            : ""
+        }
         <div class="total-row grand-total">
           <span>TOTAL:</span>
           <span>Rp ${formatCurrency(finalTotal.value)}</span>
@@ -843,7 +901,7 @@ const printReceipt = () => {
   `;
 
   // Open new window and print
-  const printWindow = window.open('', '_blank', 'width=400,height=600');
+  const printWindow = window.open("", "_blank", "width=400,height=600");
   printWindow.document.write(receiptContent);
   printWindow.document.close();
   printWindow.focus();
@@ -976,11 +1034,11 @@ computed(() => {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 8px;
   }
-  
+
   .product-name {
     font-size: 0.85rem;
   }
-  
+
   .product-price {
     font-size: 1rem;
   }
@@ -988,13 +1046,17 @@ computed(() => {
 
 /* Cart Styles */
 .cart-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(245, 245, 245, 0.9));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(245, 245, 245, 0.9)
+  );
   backdrop-filter: blur(20px);
   border: 1px solid rgba(46, 125, 50, 0.1);
 }
 
 .cart-header {
-  background: linear-gradient(135deg, #2E7D32, #388E3C);
+  background: linear-gradient(135deg, #2e7d32, #388e3c);
   margin: -1px -1px 0 -1px;
   border-radius: 16px 16px 0 0;
   padding: 16px 20px;
@@ -1064,7 +1126,7 @@ computed(() => {
   min-width: 40px;
   text-align: center;
   color: white !important;
-  background: linear-gradient(135deg, #2E7D32, #388E3C) !important;
+  background: linear-gradient(135deg, #2e7d32, #388e3c) !important;
 }
 
 .remove-btn {
@@ -1077,7 +1139,11 @@ computed(() => {
 }
 
 .total-section {
-  background: linear-gradient(135deg, rgba(46, 125, 50, 0.1), rgba(85, 139, 47, 0.1));
+  background: linear-gradient(
+    135deg,
+    rgba(46, 125, 50, 0.1),
+    rgba(85, 139, 47, 0.1)
+  );
   border: 1px solid rgba(46, 125, 50, 0.2);
   backdrop-filter: blur(10px);
 }
@@ -1102,14 +1168,14 @@ computed(() => {
 }
 
 .payment-btn {
-  background: linear-gradient(135deg, #2E7D32, #388E3C) !important;
+  background: linear-gradient(135deg, #2e7d32, #388e3c) !important;
   color: white !important;
   box-shadow: 0 4px 20px rgba(46, 125, 50, 0.3) !important;
   transition: all 0.3s ease;
 }
 
 .payment-btn:hover {
-  background: linear-gradient(135deg, #1B5E20, #2E7D32) !important;
+  background: linear-gradient(135deg, #1b5e20, #2e7d32) !important;
   box-shadow: 0 6px 28px rgba(46, 125, 50, 0.4) !important;
   transform: translateY(-2px);
 }
@@ -1125,24 +1191,24 @@ computed(() => {
   .cart-card {
     margin-bottom: 20px;
   }
-  
+
   .sticky {
     position: relative;
     top: auto;
   }
-  
+
   .cart-header {
     padding: 12px 16px;
   }
-  
+
   .cart-item-card {
     margin-bottom: 8px;
   }
-  
+
   .quantity-controls {
     padding: 2px;
   }
-  
+
   .quantity-display {
     min-width: 35px;
   }
@@ -1152,15 +1218,15 @@ computed(() => {
   .product-grid {
     grid-template-columns: 1fr 1fr;
   }
-  
+
   .cart-items-container {
     max-height: 300px !important;
   }
-  
+
   .cart-item-card .v-card-text {
     padding: 12px !important;
   }
-  
+
   .cart-item-avatar {
     width: 40px !important;
     height: 40px !important;

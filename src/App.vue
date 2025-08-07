@@ -8,7 +8,7 @@
       height="64"
       class="herbal-gradient"
     >
-      <v-app-bar-nav-icon 
+      <v-app-bar-nav-icon
         @click="drawer = !drawer"
         color="white"
         class="d-md-none"
@@ -50,8 +50,12 @@
 
         <v-list class="rounded-lg">
           <v-list-item>
-            <v-list-item-title class="font-weight-bold">{{ authStore.user?.nama }}</v-list-item-title>
-            <v-list-item-subtitle class="text-capitalize">{{ authStore.user?.role }}</v-list-item-subtitle>
+            <v-list-item-title class="font-weight-bold">{{
+              authStore.user?.nama
+            }}</v-list-item-title>
+            <v-list-item-subtitle class="text-capitalize">{{
+              authStore.user?.role
+            }}</v-list-item-subtitle>
           </v-list-item>
           <v-divider></v-divider>
           <v-list-item @click="logout">
@@ -78,8 +82,12 @@
         <v-avatar size="64" color="rgba(255,255,255,0.2)" class="mb-3">
           <v-icon size="32" color="white">mdi-account</v-icon>
         </v-avatar>
-        <div class="text-white font-weight-bold text-h6">{{ authStore.user?.nama }}</div>
-        <div class="text-white text-body-2 text-capitalize opacity-80">{{ authStore.user?.role }}</div>
+        <div class="text-white font-weight-bold text-h6">
+          {{ authStore.user?.nama }}
+        </div>
+        <div class="text-white text-body-2 text-capitalize opacity-80">
+          {{ authStore.user?.role }}
+        </div>
       </div>
 
       <v-list class="pa-0">
@@ -124,12 +132,12 @@
 
     <!-- Main Content -->
     <v-main class="natural-gradient">
-      <v-container 
-        fluid 
+      <v-container
+        fluid
         :class="{
           'pa-2': $vuetify.display.mobile,
           'pa-4': !$vuetify.display.mobile,
-          'pb-20': $vuetify.display.mobile && authStore.isAuthenticated
+          'pb-20': $vuetify.display.mobile && authStore.isAuthenticated,
         }"
       >
         <router-view />
@@ -182,17 +190,42 @@ const navigationItems = [
 // Visible navigation items for desktop (exclude admin-only if not admin)
 const visibleNavigationItems = computed(() => {
   return navigationItems
-    .filter(item => !item.adminOnly || authStore.isAdmin)
+    .filter((item) => !item.adminOnly || authStore.isAdmin)
     .slice(0, 5); // Limit to 5 items for desktop
 });
 
 // Bottom navigation items for mobile (main features only)
 const bottomNavigationItems = [
-  { title: "Dashboard", shortTitle: "Home", icon: "mdi-view-dashboard", to: "/" },
-  { title: "Point of Sale", shortTitle: "POS", icon: "mdi-cash-register", to: "/pos" },
-  { title: "Produk", shortTitle: "Produk", icon: "mdi-package-variant", to: "/products" },
-  { title: "Transaksi", shortTitle: "Transaksi", icon: "mdi-receipt", to: "/transactions" },
-  { title: "Lainnya", shortTitle: "Menu", icon: "mdi-menu", action: "openDrawer" },
+  {
+    title: "Dashboard",
+    shortTitle: "Home",
+    icon: "mdi-view-dashboard",
+    to: "/",
+  },
+  {
+    title: "Point of Sale",
+    shortTitle: "POS",
+    icon: "mdi-cash-register",
+    to: "/pos",
+  },
+  {
+    title: "Produk",
+    shortTitle: "Produk",
+    icon: "mdi-package-variant",
+    to: "/products",
+  },
+  {
+    title: "Transaksi",
+    shortTitle: "Transaksi",
+    icon: "mdi-receipt",
+    to: "/transactions",
+  },
+  {
+    title: "Lainnya",
+    shortTitle: "Menu",
+    icon: "mdi-menu",
+    action: "openDrawer",
+  },
 ];
 
 const logout = async () => {
@@ -211,11 +244,11 @@ onMounted(async () => {
 
 <style scoped>
 .herbal-gradient {
-  background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+  background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
 }
 
 .natural-gradient {
-  background: linear-gradient(135deg, #F1F8E9 0%, #E8F5E8 100%);
+  background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e8 100%);
 }
 
 .glass-effect {
