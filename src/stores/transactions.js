@@ -58,7 +58,10 @@ export const useTransactionStore = defineStore("transactions", () => {
     );
 
     if (existingItem) {
-      existingItem.jumlah += quantity;
+      // Check if we can add more quantity
+      if (existingItem.jumlah + quantity <= existingItem.stok_tersedia) {
+        existingItem.jumlah += quantity;
+      }
     } else {
       cart.value.push({
         product_id: product.id,
@@ -66,6 +69,7 @@ export const useTransactionStore = defineStore("transactions", () => {
         harga_satuan: product.harga,
         jumlah: quantity,
         stok_tersedia: product.stok,
+        gambar: product.gambar,
       });
     }
   };
@@ -79,9 +83,10 @@ export const useTransactionStore = defineStore("transactions", () => {
     if (item) {
       if (quantity <= 0) {
         removeFromCart(productId);
-      } else {
+      } else if (quantity <= item.stok_tersedia) {
         item.jumlah = quantity;
       }
+      // If quantity exceeds stock, don't update
     }
   };
 
@@ -176,8 +181,10 @@ export const useTransactionStore = defineStore("transactions", () => {
 
         // Update product stock
         const productRef = doc(db, "products", item.product_id);
-        const newStock = item.stok_tersedia - item.jumlah;
-        batch.update(productRef, { stok: newStock });
+        // Get current stock from the original product data
+        const currentStock = item.stok_tersedia;
+        const newStock = currentStock - item.jumlah;
+        batch.update(productRef, { stok: Math.max(0, newStock) });
       }
 
       // Create payment record

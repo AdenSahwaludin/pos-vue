@@ -30,7 +30,11 @@ export const useAuthStore = defineStore("auth", () => {
 
   // Getters
   const isAuthenticated = computed(() => !!user.value);
-  const isAdmin = computed(() => user.value?.role === "admin");
+  const isAdmin = computed(() => {
+    const result = user.value?.role === "admin";
+    console.log("isAdmin check:", { user: user.value, role: user.value?.role, isAdmin: result });
+    return result;
+  });
   const isKasir = computed(() => user.value?.role === "kasir");
 
   // Actions
@@ -50,18 +54,21 @@ export const useAuthStore = defineStore("auth", () => {
       const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
 
       if (userDoc.exists()) {
-        user.value = {
+        const userData = {
           id: firebaseUser.uid,
           email: firebaseUser.email,
           ...userDoc.data(),
         };
+        
+        user.value = userData;
+        localStorage.setItem("user", JSON.stringify(userData));
 
         // Update last login
         await updateDoc(doc(db, "users", firebaseUser.uid), {
           terakhir_login: new Date(),
         });
 
-        return user.value;
+        return userData;
       } else {
         throw new Error("User data not found");
       }
@@ -90,21 +97,28 @@ export const useAuthStore = defineStore("auth", () => {
           try {
             const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
             if (userDoc.exists()) {
-              user.value = {
+              const userData = {
                 id: firebaseUser.uid,
                 email: firebaseUser.email,
                 ...userDoc.data(),
               };
+              user.value = userData;
+              localStorage.setItem("user", JSON.stringify(userData));
             } else {
               console.error("User document does not exist.");
+              user.value = null;
+              localStorage.removeItem("user");
             }
           } catch (err) {
             console.error("Error fetching user data:", err);
+            user.value = null;
+            localStorage.removeItem("user");
           }
         } else {
           user.value = null;
+          localStorage.removeItem("user");
         }
-        resolve();
+        resolve(user.value);
       });
     });
   };
@@ -122,7 +136,15 @@ export const useAuthStore = defineStore("auth", () => {
   const loadUser = () => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
-      user.value = JSON.parse(savedUser);
+      try {
+        const userData = JSON.parse(savedUser);
+        user.value = userData;
+        console.log("User loaded from localStorage:", userData);
+      } catch (error) {
+        console.error("Error parsing user data from localStorage:", error);
+        localStorage.removeItem("user");
+        user.value = null;
+      }
     }
   };
 

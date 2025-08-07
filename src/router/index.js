@@ -81,7 +81,7 @@ router.beforeEach(async (to, from, next) => {
   const auth = getAuth();
 
   // Tunggu Firebase Authentication untuk memverifikasi status login
-  const user = await new Promise((resolve) => {
+  const firebaseUser = await new Promise((resolve) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       unsubscribe();
       resolve(user);
@@ -89,17 +89,27 @@ router.beforeEach(async (to, from, next) => {
   });
 
   // Update authStore dengan user yang terverifikasi
-  if (user) {
-    authStore.setUser(user);
+  if (firebaseUser) {
+    // Jika belum ada user di store atau user ID berbeda, ambil data lengkap dari Firestore
+    if (!authStore.user || authStore.user.id !== firebaseUser.uid) {
+      try {
+        await authStore.initializeAuth();
+      } catch (error) {
+        console.error("Error initializing auth:", error);
+      }
+    }
   } else {
     authStore.setUser(null);
   }
 
   // Route guard logic
-  if (to.meta.requiresAuth && !user) {
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next("/login");
-  } else if (to.meta.requiresGuest && user) {
+  } else if (to.meta.requiresGuest && authStore.isAuthenticated) {
     next("/"); // Redirect ke dashboard jika sudah login
+  } else if (to.meta.adminOnly && !authStore.isAdmin) {
+    // Redirect kasir ke dashboard jika mencoba akses halaman admin
+    next("/");
   } else {
     next();
   }
