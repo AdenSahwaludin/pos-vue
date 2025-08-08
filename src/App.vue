@@ -24,18 +24,50 @@
 
       <!-- Desktop Navigation (Hidden on mobile) -->
       <div class="d-none d-md-flex align-center">
-        <v-btn
-          v-for="item in visibleNavigationItems"
-          :key="item.title"
-          :to="item.to"
-          variant="text"
-          color="white"
-          class="mx-1"
-          rounded="lg"
-        >
-          <v-icon size="20" class="mr-2">{{ item.icon }}</v-icon>
-          {{ item.title }}
-        </v-btn>
+        <template v-for="item in visibleNavigationItems" :key="item.title">
+          <!-- Dropdown Menu Items -->
+          <v-menu v-if="item.dropdown" offset-y>
+            <template v-slot:activator="{ props }">
+              <v-btn
+                v-bind="props"
+                variant="text"
+                color="white"
+                class="mx-1"
+                rounded="lg"
+              >
+                <v-icon size="20" class="mr-2">{{ item.icon }}</v-icon>
+                {{ item.title }}
+                <v-icon size="16" class="ml-1">mdi-chevron-down</v-icon>
+              </v-btn>
+            </template>
+            <v-list class="rounded-lg">
+              <v-list-item
+                v-for="child in item.children"
+                :key="child.title"
+                :to="child.to"
+                class="rounded-lg ma-1"
+              >
+                <template v-slot:prepend>
+                  <v-icon size="20" color="primary">{{ child.icon }}</v-icon>
+                </template>
+                <v-list-item-title>{{ child.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+          
+          <!-- Regular Menu Items -->
+          <v-btn
+            v-else
+            :to="item.to"
+            variant="text"
+            color="white"
+            class="mx-1"
+            rounded="lg"
+          >
+            <v-icon size="20" class="mr-2">{{ item.icon }}</v-icon>
+            {{ item.title }}
+          </v-btn>
+        </template>
       </div>
 
       <!-- User Menu -->
@@ -58,6 +90,24 @@
             }}</v-list-item-subtitle>
           </v-list-item>
           <v-divider></v-divider>
+          
+          <!-- Admin Settings -->
+          <v-list-item v-if="authStore.isAdmin" to="/admin/settings">
+            <template v-slot:prepend>
+              <v-icon color="primary">mdi-cog</v-icon>
+            </template>
+            <v-list-item-title>Pengaturan</v-list-item-title>
+          </v-list-item>
+          
+          <v-list-item v-if="authStore.isAdmin" to="/admin/import-data">
+            <template v-slot:prepend>
+              <v-icon color="success">mdi-database-import</v-icon>
+            </template>
+            <v-list-item-title>Import Data</v-list-item-title>
+          </v-list-item>
+          
+          <v-divider v-if="authStore.isAdmin"></v-divider>
+          
           <v-list-item @click="logout">
             <template v-slot:prepend>
               <v-icon color="error">mdi-logout</v-icon>
@@ -91,19 +141,53 @@
       </div>
 
       <v-list class="pa-0">
-        <v-list-item
-          v-for="item in navigationItems"
-          :key="item.title"
-          :to="item.to"
-          :disabled="item.adminOnly && !authStore.isAdmin"
-          class="rounded-lg ma-2"
-          color="primary"
-        >
-          <template v-slot:prepend>
-            <v-icon color="primary">{{ item.icon }}</v-icon>
-          </template>
-          <v-list-item-title>{{ item.title }}</v-list-item-title>
-        </v-list-item>
+        <template v-for="item in navigationItems" :key="item.title">
+          <!-- Dropdown items in mobile drawer -->
+          <div v-if="item.dropdown && (!item.adminOnly || authStore.isAdmin)">
+            <v-list-group>
+              <template v-slot:activator="{ props }">
+                <v-list-item
+                  v-bind="props"
+                  class="rounded-lg ma-2"
+                  color="primary"
+                >
+                  <template v-slot:prepend>
+                    <v-icon color="primary">{{ item.icon }}</v-icon>
+                  </template>
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item>
+              </template>
+              
+              <v-list-item
+                v-for="child in item.children"
+                :key="child.title"
+                :to="child.to"
+                :disabled="child.adminOnly && !authStore.isAdmin"
+                class="rounded-lg ma-2 ml-6"
+                color="primary"
+              >
+                <template v-slot:prepend>
+                  <v-icon color="primary" size="20">{{ child.icon }}</v-icon>
+                </template>
+                <v-list-item-title>{{ child.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list-group>
+          </div>
+          
+          <!-- Regular items -->
+          <v-list-item
+            v-else-if="!item.dropdown"
+            :to="item.to"
+            :disabled="item.adminOnly && !authStore.isAdmin"
+            class="rounded-lg ma-2"
+            color="primary"
+          >
+            <template v-slot:prepend>
+              <v-icon color="primary">{{ item.icon }}</v-icon>
+            </template>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item>
+        </template>
       </v-list>
     </v-navigation-drawer>
 
@@ -119,8 +203,9 @@
       <v-btn
         v-for="item in bottomNavigationItems"
         :key="item.title"
-        :to="item.to"
+        :to="item.action === 'openDrawer' ? undefined : item.to"
         :disabled="item.adminOnly && !authStore.isAdmin"
+        @click="item.action === 'openDrawer' ? (drawer = true) : null"
         stacked
         size="small"
         color="primary"
@@ -169,29 +254,59 @@ const drawer = ref(false);
 const navigationItems = [
   { title: "Dashboard", icon: "mdi-view-dashboard", to: "/" },
   { title: "Point of Sale", icon: "mdi-cash-register", to: "/pos" },
-  { title: "Produk", icon: "mdi-package-variant", to: "/products" },
   {
-    title: "Kategori",
-    icon: "mdi-tag-multiple",
-    to: "/categories",
-    adminOnly: true,
+    title: "Manajemen Produk",
+    icon: "mdi-package-variant",
+    to: null,
+    dropdown: true,
+    children: [
+      { title: "Produk", icon: "mdi-package-variant", to: "/products" },
+      { title: "Kategori", icon: "mdi-tag-multiple", to: "/categories", adminOnly: true },
+    ]
   },
   { title: "Pelanggan", icon: "mdi-account-group", to: "/customers" },
-  { title: "Transaksi", icon: "mdi-receipt", to: "/transactions" },
+  {
+    title: "Transaksi",
+    icon: "mdi-receipt",
+    to: null,
+    dropdown: true,
+    children: [
+      { title: "Daftar Transaksi", icon: "mdi-receipt-text", to: "/transactions" },
+      { title: "Riwayat Penjualan", icon: "mdi-history", to: "/sales-history" },
+      { title: "Pembayaran", icon: "mdi-credit-card", to: "/payments" },
+    ]
+  },
   { title: "Laporan", icon: "mdi-chart-line", to: "/reports", adminOnly: true },
   {
-    title: "Pengguna",
+    title: "Manajemen User",
     icon: "mdi-account-multiple",
-    to: "/users",
+    to: "/admin/users",
     adminOnly: true,
   },
 ];
 
 // Visible navigation items for desktop (exclude admin-only if not admin)
 const visibleNavigationItems = computed(() => {
-  return navigationItems
-    .filter((item) => !item.adminOnly || authStore.isAdmin)
-    .slice(0, 5); // Limit to 5 items for desktop
+  const flattenItems = (items) => {
+    const result = [];
+    items.forEach(item => {
+      if (item.dropdown && item.children) {
+        // For dropdown items, add the parent with its children
+        const filteredChildren = item.children.filter(child => !child.adminOnly || authStore.isAdmin);
+        if (filteredChildren.length > 0) {
+          result.push({
+            ...item,
+            children: filteredChildren
+          });
+        }
+      } else if (!item.adminOnly || authStore.isAdmin) {
+        result.push(item);
+      }
+    });
+    return result;
+  };
+  
+  return flattenItems(navigationItems).slice(0, 6); // Limit to 6 items for desktop
 });
 
 // Bottom navigation items for mobile (main features only)

@@ -10,8 +10,15 @@ import Categories from "@/views/categories/Categories.vue";
 import Customers from "@/views/customers/Customers.vue";
 import POS from "@/views/pos/POS.vue";
 import Transactions from "@/views/transactions/Transactions.vue";
+import SalesHistory from "@/views/transactions/SalesHistory.vue";
+import Payments from "@/views/transactions/Payments.vue";
 import Reports from "@/views/reports/Reports.vue";
 import Users from "@/views/users/Users.vue";
+
+// Admin components
+import UserManagement from "@/views/admin/UserManagement.vue";
+import AdminSettings from "@/views/admin/AdminSettings.vue";
+import ImportData from "@/views/admin/ImportData.vue";
 
 const routes = [
   {
@@ -67,6 +74,38 @@ const routes = [
     name: "Users",
     component: Users,
     meta: { requiresAuth: true, adminOnly: true },
+  },
+  // Admin routes
+  {
+    path: "/admin/users",
+    name: "UserManagement", 
+    component: UserManagement,
+    meta: { requiresAuth: true, adminOnly: true },
+  },
+  {
+    path: "/admin/settings",
+    name: "AdminSettings",
+    component: AdminSettings,
+    meta: { requiresAuth: true, adminOnly: true },
+  },
+  {
+    path: "/admin/import-data",
+    name: "ImportData",
+    component: ImportData,
+    meta: { requiresAuth: true, adminOnly: true },
+  },
+  // Additional transaction routes
+  {
+    path: "/sales-history",
+    name: "SalesHistory",
+    component: SalesHistory,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/payments",
+    name: "Payments", 
+    component: Payments,
+    meta: { requiresAuth: true },
   },
 ];
 
