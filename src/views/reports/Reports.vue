@@ -54,7 +54,7 @@
                 </div>
               </div>
               <v-spacer></v-spacer>
-              <v-icon size="48">mdi-currency-usd</v-icon>
+              <v-icon size="48">mdi-cash</v-icon>
             </div>
           </v-card-text>
         </v-card>
@@ -401,92 +401,30 @@ const generateReport = async () => {
     const averageTransaction =
       totalTransactions > 0 ? totalSales / totalTransactions : 0;
 
-    // Get real top products data
-    const productSales = {};
-    for (const transaction of filteredTransactions) {
-      try {
-        const details = await transactionStore.getTransactionDetails(transaction.id);
-        for (const detail of details) {
-          const product = productStore.products.find(p => p.id === detail.product_id);
-          const productName = product ? product.nama : 'Produk Tidak Dikenal';
-          
-          if (!productSales[detail.product_id]) {
-            productSales[detail.product_id] = {
-              nama: productName,
-              sold: 0,
-              revenue: 0
-            };
-          }
-          productSales[detail.product_id].sold += detail.jumlah;
-          productSales[detail.product_id].revenue += detail.jumlah * detail.harga_satuan;
-        }
-      } catch (error) {
-        console.error('Error fetching transaction details:', error);
-      }
-    }
-
-    const topProducts = Object.values(productSales)
-      .sort((a, b) => b.sold - a.sold)
-      .slice(0, 5);
-
-    // Get real top customers data (simplified - would need customer tracking)
-    const customerStats = {};
-    for (const transaction of filteredTransactions) {
-      const customerId = transaction.customer_id || 'guest';
-      const customerName = customerId === 'guest' ? 'Pelanggan Umum' : 
-        (customers.value.find(c => c.id === customerId)?.nama || 'Tidak Dikenal');
-      
-      if (!customerStats[customerId]) {
-        customerStats[customerId] = {
-          nama: customerName,
-          transaction_count: 0,
-          total_spent: 0
-        };
-      }
-      customerStats[customerId].transaction_count++;
-      customerStats[customerId].total_spent += transaction.total;
-    }
-
-    const topCustomers = Object.values(customerStats)
-      .sort((a, b) => b.total_spent - a.total_spent)
-      .slice(0, 5);
-
-    // Get real cashier performance
-    const cashierStats = {};
-    for (const transaction of filteredTransactions) {
-      const userId = transaction.user_id || 'unknown';
-      const userName = users.value.find(u => u.id === userId)?.nama || 'Tidak Dikenal';
-      
-      if (!cashierStats[userId]) {
-        cashierStats[userId] = {
-          nama: userName,
-          transaction_count: 0,
-          total_sales: 0
-        };
-      }
-      cashierStats[userId].transaction_count++;
-      cashierStats[userId].total_sales += transaction.total;
-    }
-
-    const cashierPerformance = Object.values(cashierStats)
-      .sort((a, b) => b.total_sales - a.total_sales);
-
-    // Calculate real profit margin (simplified calculation)
-    const totalCost = topProducts.reduce((sum, product) => {
-      const productData = productStore.products.find(p => p.nama === product.nama);
-      const estimatedCost = productData ? productData.harga * 0.7 : 0; // Assume 70% cost ratio
-      return sum + (product.sold * estimatedCost);
-    }, 0);
-    const realProfitMargin = totalCost > 0 ? ((totalSales - totalCost) / totalSales * 100).toFixed(1) : 0;
-
+    // Mock data for demonstration
     reportData.value = {
       totalSales,
       totalTransactions,
       averageTransaction,
-      profitMargin: realProfitMargin,
-      topProducts,
-      topCustomers,
-      cashierPerformance,
+      profitMargin: 25.5, // Mock profit margin
+      topProducts: [
+        { id: "1", nama: "Minyak Herbal Premium", sold: 150, revenue: 4500000 },
+        { id: "2", nama: "Minyak Tradisional", sold: 120, revenue: 3600000 },
+        { id: "3", nama: "Minyak Aromaterapi", sold: 100, revenue: 3000000 },
+        { id: "4", nama: "Minyak Kelapa Murni", sold: 80, revenue: 2400000 },
+        { id: "5", nama: "Minyak Zaitun Extra", sold: 60, revenue: 1800000 },
+      ],
+      topCustomers: [
+        { nama: "John Doe", transaction_count: 25, total_spent: 2500000 },
+        { nama: "Jane Smith", transaction_count: 20, total_spent: 2000000 },
+        { nama: "Ahmad Rahman", transaction_count: 18, total_spent: 1800000 },
+        { nama: "Siti Nurhaliza", transaction_count: 15, total_spent: 1500000 },
+        { nama: "Budi Santoso", transaction_count: 12, total_spent: 1200000 },
+      ],
+      cashierPerformance: [
+        { nama: "Admin User", transaction_count: 180, total_sales: 18000000 },
+        { nama: "Kasir User", transaction_count: 120, total_sales: 12000000 },
+      ],
     };
   } catch (error) {
     console.error("Error generating report:", error);

@@ -13,6 +13,7 @@ import {
   where
 } from 'firebase/firestore'
 import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth'
+import { generateUserId } from '@/utils/idGenerator'
 
 export const useUserStore = defineStore('user', () => {
   const users = ref([])
@@ -43,6 +44,9 @@ export const useUserStore = defineStore('user', () => {
     try {
       loading.value = true
       
+      // Generate user ID in format 001-ADN
+      const userId = await generateUserId(userData.nama);
+      
       // Create user in Firebase Auth
       const auth = getAuth()
       const userCredential = await createUserWithEmailAndPassword(
@@ -53,21 +57,24 @@ export const useUserStore = defineStore('user', () => {
       
       // Create user document in Firestore
       const userDoc = {
+        id: userId,
         nama: userData.nama,
         email: userData.email,
         role: userData.role,
         status: userData.status,
+        firebase_uid: userCredential.user.uid,
         created_at: new Date(),
         updated_at: new Date()
       }
       
-      await addDoc(collection(db, 'users'), {
-        ...userDoc,
-        firebase_uid: userCredential.user.uid
-      })
+      // Use the generated ID as the document ID
+      const docRef = doc(db, 'users', userId);
+      await addDoc(docRef, userDoc);
       
       // Refresh users list
       await fetchUsers()
+      
+      return { id: userId, ...userDoc };
     } catch (err) {
       error.value = err.message
       throw err

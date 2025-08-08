@@ -188,6 +188,10 @@
             density="compact"
             hide-default-footer
           >
+            <template v-slot:item.product_name="{ item }">
+              {{ item.product?.nama || item.product_name || 'Produk tidak ditemukan' }}
+            </template>
+
             <template v-slot:item.harga_satuan="{ item }">
               Rp {{ formatCurrency(item.harga_satuan) }}
             </template>
@@ -412,20 +416,7 @@ const viewTransactionDetails = async (transaction) => {
 const loadTransactionDetails = async (transactionId) => {
   try {
     loadingDetails.value = true;
-    const details = await transactionStore.getTransactionDetails(transactionId);
-
-    // Get product names
-    const detailsWithProducts = await Promise.all(
-      details.map(async (detail) => {
-        // In a real app, you'd get product info from the store
-        return {
-          ...detail,
-          product_name: `Product ${detail.product_id}`, // Placeholder
-        };
-      })
-    );
-
-    transactionDetails.value = detailsWithProducts;
+    transactionDetails.value = await transactionStore.getTransactionDetails(transactionId);
   } catch (error) {
     console.error("Error loading transaction details:", error);
   } finally {

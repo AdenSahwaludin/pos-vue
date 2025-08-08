@@ -17,6 +17,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { useAuthStore } from "./auth";
+import { generateTransactionDetailId } from "@/utils/idGenerator";
 
 export const useTransactionStore = defineStore("transactions", () => {
   // State
@@ -130,15 +131,33 @@ export const useTransactionStore = defineStore("transactions", () => {
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, "0");
 
-    // Get today's transaction count
-    const todayCount = todayTransactions.value.length + 1;
-    const invoiceNumber = String(todayCount).padStart(3, "0");
+    // Get this month's transaction count for sequence
+    const startOfMonth = new Date(year, now.getMonth(), 1);
+    const endOfMonth = new Date(year, now.getMonth() + 1, 0, 23, 59, 59, 999);
 
-    const customerSuffix = customerId
-      ? customerId.substring(0, 6).toUpperCase()
-      : "GUEST";
+    const q = query(
+      collection(db, "transactions"),
+      where("tanggal", ">=", startOfMonth),
+      where("tanggal", "<=", endOfMonth)
+    );
 
-    return `INV-${year}-${month}-${invoiceNumber}-${customerSuffix}`;
+    const snapshot = await getDocs(q);
+    const sequence = String(snapshot.size + 1).padStart(3, "0");
+
+    // Format customer ID part - ensure it's in P000001 format
+    let customerPart = "P000001"; // Default
+    if (customerId) {
+      // If customerId is already in correct format (P000001), use it
+      if (/^P\d{6}$/.test(customerId)) {
+        customerPart = customerId;
+      } else {
+        // Otherwise format it properly
+        const numericId = parseInt(customerId.replace(/\D/g, '')) || 1;
+        customerPart = `P${String(numericId).padStart(6, '0')}`;
+      }
+    }
+    
+    return `INV-${year}-${month}-${sequence}-${customerPart}`;
   };
 
   const createTransaction = async (transactionData, paymentData) => {
@@ -171,12 +190,18 @@ export const useTransactionStore = defineStore("transactions", () => {
 
       // Create transaction details
       for (const item of cart.value) {
-        const detailRef = doc(collection(db, "transaction_details"));
+        // Generate auto-increment ID for transaction detail
+        const detailId = await generateTransactionDetailId();
+        
+        const detailRef = doc(db, "transaction_details", String(detailId));
         batch.set(detailRef, {
-          transaction_id: transactionRef.id,
+          id: detailId,
+          transaction_id: transactionId, // Use the generated transaction ID instead of document ID
+          transaction_doc_id: transactionRef.id, // Store document ID for reference
           product_id: item.product_id,
           jumlah: item.jumlah,
           harga_satuan: item.harga_satuan,
+          created_at: serverTimestamp(),
         });
 
         // Update product stock
@@ -189,13 +214,31 @@ export const useTransactionStore = defineStore("transactions", () => {
 
       // Create payment record
       const paymentRef = doc(collection(db, "payments"));
-      const paymentId = `PAY-${new Date()
-        .toISOString()
-        .slice(0, 10)
-        .replace(/-/g, "")}-${Date.now().toString().slice(-7)}`;
+      
+      // Generate proper payment ID: PAY-YYYYMMDD-0000001
+      const today = new Date();
+      const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');
+      
+      // Get today's payment count for sequence
+      const startOfDay = new Date(today);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(today);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      const paymentQuery = query(
+        collection(db, "payments"),
+        where("tanggal", ">=", startOfDay),
+        where("tanggal", "<=", endOfDay)
+      );
+      
+      const paymentSnapshot = await getDocs(paymentQuery);
+      const paymentSequence = String(paymentSnapshot.size + 1).padStart(7, '0');
+      const paymentId = `PAY-${dateStr}-${paymentSequence}`;
+      
       batch.set(paymentRef, {
         id: paymentId,
-        transaction_id: transactionRef.id,
+        transaction_id: transactionId, // Use the generated transaction ID
+        transaction_doc_id: transactionRef.id, // Store document ID for reference
         metode: paymentData.metode,
         jumlah: paymentData.jumlah,
         keterangan: paymentData.keterangan || null,
@@ -207,7 +250,8 @@ export const useTransactionStore = defineStore("transactions", () => {
 
       // Update local state
       const newTransaction = {
-        id: transactionRef.id,
+        id: transactionId, // Use the generated transaction ID
+        doc_id: transactionRef.id, // Store document ID for reference
         ...transaction,
         tanggal: new Date(),
       };
@@ -247,10 +291,33 @@ export const useTransactionStore = defineStore("transactions", () => {
         where("transaction_id", "==", transactionId)
       );
       const querySnapshot = await getDocs(q);
-      return querySnapshot.docs.map((doc) => ({
+      const details = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
+
+      // Fetch product information for each detail
+      const detailsWithProducts = await Promise.all(
+        details.map(async (detail) => {
+          try {
+            const productDoc = await getDoc(
+              doc(db, "products", detail.product_id)
+            );
+            if (productDoc.exists()) {
+              return {
+                ...detail,
+                product: productDoc.data(),
+              };
+            }
+            return detail;
+          } catch (err) {
+            console.warn("Could not fetch product:", detail.product_id, err);
+            return detail;
+          }
+        })
+      );
+
+      return detailsWithProducts;
     } catch (err) {
       error.value = err.message;
       throw err;

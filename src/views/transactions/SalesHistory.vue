@@ -154,10 +154,10 @@
             </thead>
             <tbody>
               <tr v-for="detail in transactionDetails" :key="detail.id">
-                <td>{{ detail.product_name || 'Produk tidak ditemukan' }}</td>
+                <td>{{ detail.product?.nama || detail.product_name || 'Produk tidak ditemukan' }}</td>
                 <td>{{ detail.jumlah }}</td>
-                <td>{{ formatCurrency(detail.harga_satuan) }}</td>
-                <td>{{ formatCurrency(detail.jumlah * detail.harga_satuan) }}</td>
+                <td>Rp {{ formatCurrency(detail.harga_satuan) }}</td>
+                <td>Rp {{ formatCurrency(detail.jumlah * detail.harga_satuan) }}</td>
               </tr>
             </tbody>
           </v-table>

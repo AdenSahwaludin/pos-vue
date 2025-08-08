@@ -344,8 +344,8 @@
             </div>
           </v-card-text>
 
-          <!-- Cart Summary -->
-          <div v-if="transactionStore.cart.length > 0">
+          <!-- Cart Summary - Always visible -->
+          <div>
             <v-divider class="mx-3"></v-divider>
 
             <v-card-text class="pa-4">
@@ -368,6 +368,7 @@
                 prepend-inner-icon="mdi-tag"
                 min="0"
                 :max="transactionStore.cartTotal"
+                :disabled="transactionStore.cart.length === 0"
                 class="mb-2 modern-input"
                 hide-details
               ></v-text-field>
@@ -382,6 +383,7 @@
                 rounded="lg"
                 prepend-inner-icon="mdi-percent"
                 min="0"
+                :disabled="transactionStore.cart.length === 0"
                 class="mb-3 modern-input"
                 hide-details
               ></v-text-field>
@@ -554,11 +556,13 @@
 import { ref, computed, onMounted } from "vue";
 import { useProductStore } from "@/stores/products";
 import { useTransactionStore } from "@/stores/transactions";
+import { useCustomerStore } from "@/stores/customers";
 import { db } from "@/config/firebase";
 import { collection, getDocs } from "firebase/firestore";
 
 const productStore = useProductStore();
 const transactionStore = useTransactionStore();
+const customerStore = useCustomerStore();
 
 // Search and filter
 const searchQuery = ref("");
@@ -578,8 +582,8 @@ const notes = ref("");
 const lastTransactionId = ref("");
 
 // Real customers from database
-const customers = ref([]);
-const loadingCustomers = ref(false);
+const customers = computed(() => customerStore.customers);
+const loadingCustomers = computed(() => customerStore.loading);
 
 const paymentMethods = [
   { title: "Tunai", value: "tunai" },
@@ -615,18 +619,7 @@ const formatCurrency = (value) => {
 };
 
 const fetchCustomers = async () => {
-  try {
-    loadingCustomers.value = true;
-    const querySnapshot = await getDocs(collection(db, "customers"));
-    customers.value = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-  } catch (error) {
-    console.error("Error fetching customers:", error);
-  } finally {
-    loadingCustomers.value = false;
-  }
+  await customerStore.fetchCustomers();
 };
 
 const addToCart = (product) => {
@@ -663,11 +656,31 @@ const resetPaymentForm = () => {
   notes.value = "";
 };
 
+// Store receipt data before payment
+const receiptData = ref(null);
+
 const processPayment = async () => {
   const { valid } = await paymentForm.value.validate();
 
   if (valid) {
     try {
+      // Capture receipt data before cart is cleared
+      receiptData.value = {
+        cartItems: [...transactionStore.cart],
+        customer: customerStore.getCustomerById(selectedCustomer.value),
+        totals: {
+          subtotal: transactionStore.cartTotal,
+          discount: discount.value,
+          tax: tax.value,
+          finalTotal: finalTotal.value,
+        },
+        payment: {
+          amount: paymentAmount.value,
+          change: change.value,
+          method: paymentMethod.value,
+        }
+      };
+
       const transactionData = {
         customer_id: selectedCustomer.value,
         catatan: notes.value,
@@ -702,8 +715,12 @@ const processPayment = async () => {
 };
 
 const printReceipt = () => {
-  const cartItems = transactionStore.cart;
-  const customer = customers.value.find((c) => c.id === selectedCustomer.value);
+  if (!receiptData.value) {
+    console.error('No receipt data available');
+    return;
+  }
+
+  const { cartItems, customer, totals, payment } = receiptData.value;
 
   // Prepare receipt content
   const receiptContent = `
@@ -857,37 +874,37 @@ const printReceipt = () => {
       <div class="total-section">
         <div class="total-row">
           <span>Subtotal:</span>
-          <span>Rp ${formatCurrency(transactionStore.cartTotal)}</span>
+          <span>Rp ${formatCurrency(totals.subtotal)}</span>
         </div>
         ${
-          discount.value > 0
+          totals.discount > 0
             ? `
         <div class="total-row">
           <span>Diskon:</span>
-          <span>- Rp ${formatCurrency(discount.value)}</span>
+          <span>- Rp ${formatCurrency(totals.discount)}</span>
         </div>`
             : ""
         }
         ${
-          tax.value > 0
+          totals.tax > 0
             ? `
         <div class="total-row">
           <span>Pajak:</span>
-          <span>Rp ${formatCurrency(tax.value)}</span>
+          <span>Rp ${formatCurrency(totals.tax)}</span>
         </div>`
             : ""
         }
         <div class="total-row grand-total">
           <span>TOTAL:</span>
-          <span>Rp ${formatCurrency(finalTotal.value)}</span>
+          <span>Rp ${formatCurrency(totals.finalTotal)}</span>
         </div>
         <div class="total-row">
           <span>Bayar:</span>
-          <span>Rp ${formatCurrency(paymentAmount.value)}</span>
+          <span>Rp ${formatCurrency(payment.amount)}</span>
         </div>
         <div class="total-row">
           <span>Kembalian:</span>
-          <span>Rp ${formatCurrency(change.value)}</span>
+          <span>Rp ${formatCurrency(payment.change)}</span>
         </div>
       </div>
 
