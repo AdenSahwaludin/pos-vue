@@ -78,7 +78,7 @@ const routes = [
   // Admin routes
   {
     path: "/admin/users",
-    name: "UserManagement", 
+    name: "UserManagement",
     component: UserManagement,
     meta: { requiresAuth: true, adminOnly: true },
   },
@@ -103,7 +103,7 @@ const routes = [
   },
   {
     path: "/payments",
-    name: "Payments", 
+    name: "Payments",
     component: Payments,
     meta: { requiresAuth: true },
   },

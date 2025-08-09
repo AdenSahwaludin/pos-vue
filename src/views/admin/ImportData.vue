@@ -4,10 +4,14 @@
     <v-row class="mb-4">
       <v-col>
         <div class="d-flex align-center">
-          <v-icon size="32" color="primary" class="mr-3">mdi-database-import</v-icon>
+          <v-icon size="32" color="primary" class="mr-3"
+            >mdi-database-import</v-icon
+          >
           <div>
             <h1 class="text-h4 font-weight-bold text-primary">Import Data</h1>
-            <p class="text-body-1 text-grey-darken-1 mb-0">Import data dari file JSON</p>
+            <p class="text-body-1 text-grey-darken-1 mb-0">
+              Import data dari file JSON
+            </p>
           </div>
         </div>
       </v-col>
@@ -21,12 +25,13 @@
             <v-icon class="mr-2">mdi-package-variant</v-icon>
             Import Produk & Kategori
           </v-card-title>
-          
+
           <v-card-text class="pa-4">
             <p class="text-body-2 mb-4">
-              Import data produk dan kategori dari file JSON. Format file harus sesuai dengan template yang disediakan.
+              Import data produk dan kategori dari file JSON. Format file harus
+              sesuai dengan template yang disediakan.
             </p>
-            
+
             <v-file-input
               v-model="productFile"
               label="Pilih File JSON Produk"
@@ -37,7 +42,7 @@
               class="mb-3"
               :clearable="false"
             ></v-file-input>
-            
+
             <v-row class="mb-3">
               <v-col cols="6">
                 <v-btn
@@ -65,7 +70,7 @@
                 </v-btn>
               </v-col>
             </v-row>
-            
+
             <v-alert
               v-if="productResult.show"
               :type="productResult.type"
@@ -84,12 +89,13 @@
             <v-icon class="mr-2">mdi-account-group</v-icon>
             Import Pelanggan
           </v-card-title>
-          
+
           <v-card-text class="pa-4">
             <p class="text-body-2 mb-4">
-              Import data pelanggan dari file JSON. Format file harus sesuai dengan template yang disediakan.
+              Import data pelanggan dari file JSON. Format file harus sesuai
+              dengan template yang disediakan.
             </p>
-            
+
             <v-file-input
               v-model="customerFile"
               label="Pilih File JSON Pelanggan"
@@ -100,7 +106,7 @@
               class="mb-3"
               :clearable="false"
             ></v-file-input>
-            
+
             <v-row class="mb-3">
               <v-col cols="6">
                 <v-btn
@@ -128,7 +134,7 @@
                 </v-btn>
               </v-col>
             </v-row>
-            
+
             <v-alert
               v-if="customerResult.show"
               :type="customerResult.type"
@@ -147,12 +153,13 @@
             <v-icon class="mr-2">mdi-receipt</v-icon>
             Import Transaksi
           </v-card-title>
-          
+
           <v-card-text class="pa-4">
             <p class="text-body-2 mb-4">
-              Import data transaksi dari file JSON. Pastikan data produk dan pelanggan sudah tersedia.
+              Import data transaksi dari file JSON. Pastikan data produk dan
+              pelanggan sudah tersedia.
             </p>
-            
+
             <v-file-input
               v-model="transactionFile"
               label="Pilih File JSON Transaksi"
@@ -163,7 +170,7 @@
               class="mb-3"
               :clearable="false"
             ></v-file-input>
-            
+
             <v-row class="mb-3">
               <v-col cols="6">
                 <v-btn
@@ -191,7 +198,7 @@
                 </v-btn>
               </v-col>
             </v-row>
-            
+
             <v-alert
               v-if="transactionResult.show"
               :type="transactionResult.type"
@@ -210,12 +217,13 @@
             <v-icon class="mr-2">mdi-credit-card</v-icon>
             Import Pembayaran
           </v-card-title>
-          
+
           <v-card-text class="pa-4">
             <p class="text-body-2 mb-4">
-              Import data pembayaran dari file JSON. Pastikan data transaksi sudah tersedia.
+              Import data pembayaran dari file JSON. Pastikan data transaksi
+              sudah tersedia.
             </p>
-            
+
             <v-file-input
               v-model="paymentFile"
               label="Pilih File JSON Pembayaran"
@@ -226,7 +234,7 @@
               class="mb-3"
               :clearable="false"
             ></v-file-input>
-            
+
             <v-row class="mb-3">
               <v-col cols="6">
                 <v-btn
@@ -254,7 +262,7 @@
                 </v-btn>
               </v-col>
             </v-row>
-            
+
             <v-alert
               v-if="paymentResult.show"
               :type="paymentResult.type"
@@ -276,7 +284,7 @@
             <v-icon class="mr-2">mdi-history</v-icon>
             Riwayat Import
           </v-card-title>
-          
+
           <v-data-table
             :headers="historyHeaders"
             :items="importHistory"
@@ -285,23 +293,20 @@
             class="elevation-0"
           >
             <template v-slot:item.type="{ item }">
-              <v-chip
-                :color="getTypeColor(item.type)"
-                size="small"
-              >
+              <v-chip :color="getTypeColor(item.type)" size="small">
                 {{ getTypeLabel(item.type) }}
               </v-chip>
             </template>
-            
+
             <template v-slot:item.status="{ item }">
               <v-chip
                 :color="item.status === 'success' ? 'success' : 'error'"
                 size="small"
               >
-                {{ item.status === 'success' ? 'Berhasil' : 'Gagal' }}
+                {{ item.status === "success" ? "Berhasil" : "Gagal" }}
               </v-chip>
             </template>
-            
+
             <template v-slot:item.created_at="{ item }">
               {{ formatDateTime(item.created_at) }}
             </template>
@@ -311,167 +316,163 @@
     </v-row>
 
     <!-- Snackbar -->
-    <v-snackbar
-      v-model="snackbar.show"
-      :color="snackbar.color"
-      :timeout="3000"
-    >
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="3000">
       {{ snackbar.message }}
     </v-snackbar>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useImportStore } from '@/stores/import'
+import { ref, onMounted } from "vue";
+import { useImportStore } from "@/stores/import";
 
-const importStore = useImportStore()
+const importStore = useImportStore();
 
 // File refs
-const productFile = ref(null)
-const customerFile = ref(null)
-const transactionFile = ref(null)
-const paymentFile = ref(null)
+const productFile = ref(null);
+const customerFile = ref(null);
+const transactionFile = ref(null);
+const paymentFile = ref(null);
 
 // Loading states
-const importingProduct = ref(false)
-const importingCustomer = ref(false)
-const importingTransaction = ref(false)
-const importingPayment = ref(false)
-const loadingHistory = ref(false)
+const importingProduct = ref(false);
+const importingCustomer = ref(false);
+const importingTransaction = ref(false);
+const importingPayment = ref(false);
+const loadingHistory = ref(false);
 
 // Results
-const productResult = ref({ show: false, type: 'success', message: '' })
-const customerResult = ref({ show: false, type: 'success', message: '' })
-const transactionResult = ref({ show: false, type: 'success', message: '' })
-const paymentResult = ref({ show: false, type: 'success', message: '' })
+const productResult = ref({ show: false, type: "success", message: "" });
+const customerResult = ref({ show: false, type: "success", message: "" });
+const transactionResult = ref({ show: false, type: "success", message: "" });
+const paymentResult = ref({ show: false, type: "success", message: "" });
 
 const snackbar = ref({
   show: false,
-  message: '',
-  color: 'success'
-})
+  message: "",
+  color: "success",
+});
 
-const importHistory = ref([])
+const importHistory = ref([]);
 
 // Table headers
 const historyHeaders = [
-  { title: 'Tanggal', key: 'created_at', sortable: true },
-  { title: 'Jenis Data', key: 'type', sortable: true },
-  { title: 'File', key: 'filename', sortable: false },
-  { title: 'Status', key: 'status', sortable: true },
-  { title: 'Jumlah Record', key: 'records_count', sortable: true },
-  { title: 'Keterangan', key: 'message', sortable: false }
-]
+  { title: "Tanggal", key: "created_at", sortable: true },
+  { title: "Jenis Data", key: "type", sortable: true },
+  { title: "File", key: "filename", sortable: false },
+  { title: "Status", key: "status", sortable: true },
+  { title: "Jumlah Record", key: "records_count", sortable: true },
+  { title: "Keterangan", key: "message", sortable: false },
+];
 
 // Methods
 const importProducts = async () => {
-  if (!productFile.value) return
-  
+  if (!productFile.value) return;
+
   try {
-    importingProduct.value = true
-    const result = await importStore.importProducts(productFile.value)
-    
+    importingProduct.value = true;
+    const result = await importStore.importProducts(productFile.value);
+
     productResult.value = {
       show: true,
-      type: 'success',
-      message: `Berhasil import ${result.count} produk dan ${result.categories} kategori`
-    }
-    
-    showSnackbar('Data produk berhasil diimport')
-    loadImportHistory()
+      type: "success",
+      message: `Berhasil import ${result.count} produk dan ${result.categories} kategori`,
+    };
+
+    showSnackbar("Data produk berhasil diimport");
+    loadImportHistory();
   } catch (error) {
     productResult.value = {
       show: true,
-      type: 'error',
-      message: error.message || 'Gagal import data produk'
-    }
-    showSnackbar('Gagal import data produk', 'error')
+      type: "error",
+      message: error.message || "Gagal import data produk",
+    };
+    showSnackbar("Gagal import data produk", "error");
   } finally {
-    importingProduct.value = false
+    importingProduct.value = false;
   }
-}
+};
 
 const importCustomers = async () => {
-  if (!customerFile.value) return
-  
+  if (!customerFile.value) return;
+
   try {
-    importingCustomer.value = true
-    const result = await importStore.importCustomers(customerFile.value)
-    
+    importingCustomer.value = true;
+    const result = await importStore.importCustomers(customerFile.value);
+
     customerResult.value = {
       show: true,
-      type: 'success',
-      message: `Berhasil import ${result.count} pelanggan`
-    }
-    
-    showSnackbar('Data pelanggan berhasil diimport')
-    loadImportHistory()
+      type: "success",
+      message: `Berhasil import ${result.count} pelanggan`,
+    };
+
+    showSnackbar("Data pelanggan berhasil diimport");
+    loadImportHistory();
   } catch (error) {
     customerResult.value = {
       show: true,
-      type: 'error',
-      message: error.message || 'Gagal import data pelanggan'
-    }
-    showSnackbar('Gagal import data pelanggan', 'error')
+      type: "error",
+      message: error.message || "Gagal import data pelanggan",
+    };
+    showSnackbar("Gagal import data pelanggan", "error");
   } finally {
-    importingCustomer.value = false
+    importingCustomer.value = false;
   }
-}
+};
 
 const importTransactions = async () => {
-  if (!transactionFile.value) return
-  
+  if (!transactionFile.value) return;
+
   try {
-    importingTransaction.value = true
-    const result = await importStore.importTransactions(transactionFile.value)
-    
+    importingTransaction.value = true;
+    const result = await importStore.importTransactions(transactionFile.value);
+
     transactionResult.value = {
       show: true,
-      type: 'success',
-      message: `Berhasil import ${result.count} transaksi`
-    }
-    
-    showSnackbar('Data transaksi berhasil diimport')
-    loadImportHistory()
+      type: "success",
+      message: `Berhasil import ${result.count} transaksi`,
+    };
+
+    showSnackbar("Data transaksi berhasil diimport");
+    loadImportHistory();
   } catch (error) {
     transactionResult.value = {
       show: true,
-      type: 'error',
-      message: error.message || 'Gagal import data transaksi'
-    }
-    showSnackbar('Gagal import data transaksi', 'error')
+      type: "error",
+      message: error.message || "Gagal import data transaksi",
+    };
+    showSnackbar("Gagal import data transaksi", "error");
   } finally {
-    importingTransaction.value = false
+    importingTransaction.value = false;
   }
-}
+};
 
 const importPayments = async () => {
-  if (!paymentFile.value) return
-  
+  if (!paymentFile.value) return;
+
   try {
-    importingPayment.value = true
-    const result = await importStore.importPayments(paymentFile.value)
-    
+    importingPayment.value = true;
+    const result = await importStore.importPayments(paymentFile.value);
+
     paymentResult.value = {
       show: true,
-      type: 'success',
-      message: `Berhasil import ${result.count} pembayaran`
-    }
-    
-    showSnackbar('Data pembayaran berhasil diimport')
-    loadImportHistory()
+      type: "success",
+      message: `Berhasil import ${result.count} pembayaran`,
+    };
+
+    showSnackbar("Data pembayaran berhasil diimport");
+    loadImportHistory();
   } catch (error) {
     paymentResult.value = {
       show: true,
-      type: 'error',
-      message: error.message || 'Gagal import data pembayaran'
-    }
-    showSnackbar('Gagal import data pembayaran', 'error')
+      type: "error",
+      message: error.message || "Gagal import data pembayaran",
+    };
+    showSnackbar("Gagal import data pembayaran", "error");
   } finally {
-    importingPayment.value = false
+    importingPayment.value = false;
   }
-}
+};
 
 // Template downloads
 const downloadProductTemplate = () => {
@@ -480,8 +481,8 @@ const downloadProductTemplate = () => {
       {
         nama: "Minyak Herbal",
         deskripsi: "Kategori minyak herbal tradisional",
-        gambar: ""
-      }
+        gambar: "",
+      },
     ],
     products: [
       {
@@ -491,13 +492,13 @@ const downloadProductTemplate = () => {
         stok: 100,
         deskripsi: "Minyak kayu putih asli",
         gambar: "",
-        barcode: "1234567890123"
-      }
-    ]
-  }
-  
-  downloadJSON(template, 'template_produk.json')
-}
+        barcode: "1234567890123",
+      },
+    ],
+  };
+
+  downloadJSON(template, "template_produk.json");
+};
 
 const downloadCustomerTemplate = () => {
   const template = [
@@ -506,12 +507,12 @@ const downloadCustomerTemplate = () => {
       email: "john@example.com",
       telepon: "08123456789",
       alamat: "Jl. Contoh No. 123",
-      tanggal_bergabung: "2024-01-01"
-    }
-  ]
-  
-  downloadJSON(template, 'template_pelanggan.json')
-}
+      tanggal_bergabung: "2024-01-01",
+    },
+  ];
+
+  downloadJSON(template, "template_pelanggan.json");
+};
 
 const downloadTransactionTemplate = () => {
   const template = [
@@ -522,17 +523,17 @@ const downloadTransactionTemplate = () => {
         {
           product_name: "Minyak Kayu Putih",
           quantity: 2,
-          price: 25000
-        }
+          price: 25000,
+        },
       ],
       total: 50000,
       payment_method: "cash",
-      notes: ""
-    }
-  ]
-  
-  downloadJSON(template, 'template_transaksi.json')
-}
+      notes: "",
+    },
+  ];
+
+  downloadJSON(template, "template_transaksi.json");
+};
 
 const downloadPaymentTemplate = () => {
   const template = [
@@ -541,73 +542,75 @@ const downloadPaymentTemplate = () => {
       metode: "cash",
       jumlah: 50000,
       tanggal: "2024-01-01T10:00:00Z",
-      keterangan: "Pembayaran tunai"
-    }
-  ]
-  
-  downloadJSON(template, 'template_pembayaran.json')
-}
+      keterangan: "Pembayaran tunai",
+    },
+  ];
+
+  downloadJSON(template, "template_pembayaran.json");
+};
 
 const downloadJSON = (data, filename) => {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-  URL.revokeObjectURL(url)
-}
+  const blob = new Blob([JSON.stringify(data, null, 2)], {
+    type: "application/json",
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
 
 const loadImportHistory = async () => {
   try {
-    loadingHistory.value = true
-    importHistory.value = await importStore.getImportHistory()
+    loadingHistory.value = true;
+    importHistory.value = await importStore.getImportHistory();
   } catch (error) {
-    showSnackbar('Gagal memuat riwayat import', 'error')
+    showSnackbar("Gagal memuat riwayat import", "error");
   } finally {
-    loadingHistory.value = false
+    loadingHistory.value = false;
   }
-}
+};
 
 const getTypeColor = (type) => {
   const colors = {
-    products: 'primary',
-    customers: 'success',
-    transactions: 'warning',
-    payments: 'info'
-  }
-  return colors[type] || 'grey'
-}
+    products: "primary",
+    customers: "success",
+    transactions: "warning",
+    payments: "info",
+  };
+  return colors[type] || "grey";
+};
 
 const getTypeLabel = (type) => {
   const labels = {
-    products: 'Produk',
-    customers: 'Pelanggan',
-    transactions: 'Transaksi',
-    payments: 'Pembayaran'
-  }
-  return labels[type] || type
-}
+    products: "Produk",
+    customers: "Pelanggan",
+    transactions: "Transaksi",
+    payments: "Pembayaran",
+  };
+  return labels[type] || type;
+};
 
 const formatDateTime = (dateTime) => {
-  if (!dateTime) return '-'
-  return new Date(dateTime).toLocaleString('id-ID')
-}
+  if (!dateTime) return "-";
+  return new Date(dateTime).toLocaleString("id-ID");
+};
 
-const showSnackbar = (message, color = 'success') => {
+const showSnackbar = (message, color = "success") => {
   snackbar.value = {
     show: true,
     message,
-    color
-  }
-}
+    color,
+  };
+};
 
 // Lifecycle
 onMounted(() => {
-  loadImportHistory()
-})
+  loadImportHistory();
+});
 </script>
 
 <style scoped>

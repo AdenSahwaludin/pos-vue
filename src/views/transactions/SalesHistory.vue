@@ -6,8 +6,12 @@
         <div class="d-flex align-center">
           <v-icon size="32" color="primary" class="mr-3">mdi-history</v-icon>
           <div>
-            <h1 class="text-h4 font-weight-bold text-primary">Riwayat Penjualan</h1>
-            <p class="text-body-1 text-grey-darken-1 mb-0">Riwayat semua transaksi penjualan</p>
+            <h1 class="text-h4 font-weight-bold text-primary">
+              Riwayat Penjualan
+            </h1>
+            <p class="text-body-1 text-grey-darken-1 mb-0">
+              Riwayat semua transaksi penjualan
+            </p>
           </div>
         </div>
       </v-col>
@@ -67,7 +71,7 @@
         <v-icon class="mr-2">mdi-history</v-icon>
         Riwayat Penjualan
       </v-card-title>
-      
+
       <v-data-table
         :headers="headers"
         :items="salesHistory"
@@ -79,20 +83,17 @@
         <template v-slot:item.tanggal="{ item }">
           {{ formatDate(item.tanggal) }}
         </template>
-        
+
         <template v-slot:item.total="{ item }">
           {{ formatCurrency(item.total) }}
         </template>
-        
+
         <template v-slot:item.status="{ item }">
-          <v-chip
-            :color="getStatusColor(item.status)"
-            size="small"
-          >
+          <v-chip :color="getStatusColor(item.status)" size="small">
             {{ item.status }}
           </v-chip>
         </template>
-        
+
         <template v-slot:item.actions="{ item }">
           <v-btn
             icon
@@ -103,13 +104,8 @@
           >
             <v-icon size="16">mdi-eye</v-icon>
           </v-btn>
-          
-          <v-btn
-            icon
-            size="small"
-            color="success"
-            @click="printReceipt(item)"
-          >
+
+          <v-btn icon size="small" color="success" @click="printReceipt(item)">
             <v-icon size="16">mdi-printer</v-icon>
           </v-btn>
         </template>
@@ -123,25 +119,27 @@
           <v-icon class="mr-2">mdi-receipt</v-icon>
           Detail Transaksi
         </v-card-title>
-        
+
         <v-card-text class="pa-4" v-if="selectedTransaction">
           <v-row>
             <v-col cols="6">
               <strong>ID Transaksi:</strong> {{ selectedTransaction.id }}
             </v-col>
             <v-col cols="6">
-              <strong>Tanggal:</strong> {{ formatDate(selectedTransaction.tanggal) }}
+              <strong>Tanggal:</strong>
+              {{ formatDate(selectedTransaction.tanggal) }}
             </v-col>
             <v-col cols="6">
-              <strong>Total:</strong> {{ formatCurrency(selectedTransaction.total) }}
+              <strong>Total:</strong>
+              {{ formatCurrency(selectedTransaction.total) }}
             </v-col>
             <v-col cols="6">
               <strong>Status:</strong> {{ selectedTransaction.status }}
             </v-col>
           </v-row>
-          
+
           <v-divider class="my-3"></v-divider>
-          
+
           <h4 class="mb-2">Detail Produk:</h4>
           <v-table>
             <thead>
@@ -154,15 +152,23 @@
             </thead>
             <tbody>
               <tr v-for="detail in transactionDetails" :key="detail.id">
-                <td>{{ detail.product?.nama || detail.product_name || 'Produk tidak ditemukan' }}</td>
+                <td>
+                  {{
+                    detail.product?.nama ||
+                    detail.product_name ||
+                    "Produk tidak ditemukan"
+                  }}
+                </td>
                 <td>{{ detail.jumlah }}</td>
                 <td>Rp {{ formatCurrency(detail.harga_satuan) }}</td>
-                <td>Rp {{ formatCurrency(detail.jumlah * detail.harga_satuan) }}</td>
+                <td>
+                  Rp {{ formatCurrency(detail.jumlah * detail.harga_satuan) }}
+                </td>
               </tr>
             </tbody>
           </v-table>
         </v-card-text>
-        
+
         <v-card-actions class="pa-4">
           <v-spacer></v-spacer>
           <v-btn color="grey" variant="text" @click="detailDialog = false">
@@ -175,67 +181,65 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { useTransactionStore } from '@/stores/transactions'
+import { ref, onMounted, computed } from "vue";
+import { useTransactionStore } from "@/stores/transactions";
 
-const transactionStore = useTransactionStore()
+const transactionStore = useTransactionStore();
 
 // Data
-const loading = ref(false)
-const detailDialog = ref(false)
-const selectedTransaction = ref(null)
-const transactionDetails = ref([])
+const loading = ref(false);
+const detailDialog = ref(false);
+const selectedTransaction = ref(null);
+const transactionDetails = ref([]);
 
 // Filters
-const dateFrom = ref('')
-const dateTo = ref('')
-const statusFilter = ref('')
+const dateFrom = ref("");
+const dateTo = ref("");
+const statusFilter = ref("");
 
 // Computed
-const salesHistory = computed(() => transactionStore.transactions)
+const salesHistory = computed(() => transactionStore.transactions);
 
 // Table headers
 const headers = [
-  { title: 'ID Transaksi', key: 'id', sortable: true },
-  { title: 'Tanggal', key: 'tanggal', sortable: true },
-  { title: 'Total', key: 'total', sortable: true },
-  { title: 'Status', key: 'status', sortable: true },
-  { title: 'Aksi', key: 'actions', sortable: false, align: 'center' }
-]
+  { title: "ID Transaksi", key: "id", sortable: true },
+  { title: "Tanggal", key: "tanggal", sortable: true },
+  { title: "Total", key: "total", sortable: true },
+  { title: "Status", key: "status", sortable: true },
+  { title: "Aksi", key: "actions", sortable: false, align: "center" },
+];
 
 // Options
-const statusOptions = [
-  'selesai',
-  'pending',
-  'batal'
-]
+const statusOptions = ["selesai", "pending", "batal"];
 
 // Methods
 const fetchSalesHistory = async () => {
   try {
-    loading.value = true
-    await transactionStore.fetchTransactions()
+    loading.value = true;
+    await transactionStore.fetchTransactions();
   } catch (error) {
-    console.error('Error fetching sales history:', error)
+    console.error("Error fetching sales history:", error);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const viewDetails = async (transaction) => {
-  selectedTransaction.value = transaction
+  selectedTransaction.value = transaction;
   try {
-    transactionDetails.value = await transactionStore.getTransactionDetails(transaction.id)
+    transactionDetails.value = await transactionStore.getTransactionDetails(
+      transaction.id
+    );
   } catch (error) {
-    console.error('Error fetching transaction details:', error)
+    console.error("Error fetching transaction details:", error);
   }
-  detailDialog.value = true
-}
+  detailDialog.value = true;
+};
 
 const printReceipt = (transaction) => {
   // Create clean print window
-  const printWindow = window.open('', '_blank', 'width=300,height=600')
-  
+  const printWindow = window.open("", "_blank", "width=300,height=600");
+
   const receiptHTML = `
     <!DOCTYPE html>
     <html>
@@ -281,45 +285,49 @@ const printReceipt = (transaction) => {
       </div>
     </body>
     </html>
-  `
-  
-  printWindow.document.write(receiptHTML)
-  printWindow.document.close()
-  
+  `;
+
+  printWindow.document.write(receiptHTML);
+  printWindow.document.close();
+
   setTimeout(() => {
-    printWindow.print()
-    printWindow.close()
-  }, 500)
-}
+    printWindow.print();
+    printWindow.close();
+  }, 500);
+};
 
 const formatDate = (date) => {
-  if (!date) return '-'
+  if (!date) return "-";
   if (date.seconds) {
-    return new Date(date.seconds * 1000).toLocaleDateString('id-ID')
+    return new Date(date.seconds * 1000).toLocaleDateString("id-ID");
   }
-  return new Date(date).toLocaleDateString('id-ID')
-}
+  return new Date(date).toLocaleDateString("id-ID");
+};
 
 const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR'
-  }).format(amount)
-}
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  }).format(amount);
+};
 
 const getStatusColor = (status) => {
   switch (status) {
-    case 'selesai': return 'success'
-    case 'pending': return 'warning'
-    case 'batal': return 'error'
-    default: return 'grey'
+    case "selesai":
+      return "success";
+    case "pending":
+      return "warning";
+    case "batal":
+      return "error";
+    default:
+      return "grey";
   }
-}
+};
 
 // Lifecycle
 onMounted(() => {
-  fetchSalesHistory()
-})
+  fetchSalesHistory();
+});
 </script>
 
 <style scoped>

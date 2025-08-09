@@ -4,10 +4,16 @@
     <v-row class="mb-4">
       <v-col>
         <div class="d-flex align-center">
-          <v-icon size="32" color="primary" class="mr-3">mdi-credit-card</v-icon>
+          <v-icon size="32" color="primary" class="mr-3"
+            >mdi-credit-card</v-icon
+          >
           <div>
-            <h1 class="text-h4 font-weight-bold text-primary">Manajemen Pembayaran</h1>
-            <p class="text-body-1 text-grey-darken-1 mb-0">Kelola pembayaran dan transaksi pending</p>
+            <h1 class="text-h4 font-weight-bold text-primary">
+              Manajemen Pembayaran
+            </h1>
+            <p class="text-body-1 text-grey-darken-1 mb-0">
+              Kelola pembayaran dan transaksi pending
+            </p>
           </div>
         </div>
       </v-col>
@@ -30,7 +36,7 @@
         <v-icon class="mr-2">mdi-clock-alert</v-icon>
         Transaksi Pending
       </v-card-title>
-      
+
       <v-data-table
         :headers="pendingHeaders"
         :items="pendingTransactions"
@@ -41,11 +47,11 @@
         <template v-slot:item.tanggal="{ item }">
           {{ formatDate(item.tanggal) }}
         </template>
-        
+
         <template v-slot:item.total="{ item }">
           {{ formatCurrency(item.total) }}
         </template>
-        
+
         <template v-slot:item.actions="{ item }">
           <v-btn
             color="success"
@@ -56,12 +62,8 @@
             <v-icon size="16" class="mr-1">mdi-credit-card</v-icon>
             Bayar
           </v-btn>
-          
-          <v-btn
-            color="error"
-            size="small"
-            @click="cancelTransaction(item)"
-          >
+
+          <v-btn color="error" size="small" @click="cancelTransaction(item)">
             <v-icon size="16" class="mr-1">mdi-cancel</v-icon>
             Batal
           </v-btn>
@@ -75,7 +77,7 @@
         <v-icon class="mr-2">mdi-credit-card-multiple</v-icon>
         Riwayat Pembayaran
       </v-card-title>
-      
+
       <v-data-table
         :headers="paymentHeaders"
         :items="payments"
@@ -87,20 +89,17 @@
         <template v-slot:item.tanggal="{ item }">
           {{ formatDate(item.tanggal) }}
         </template>
-        
+
         <template v-slot:item.jumlah="{ item }">
           {{ formatCurrency(item.jumlah) }}
         </template>
-        
+
         <template v-slot:item.metode="{ item }">
-          <v-chip
-            :color="getPaymentMethodColor(item.metode)"
-            size="small"
-          >
+          <v-chip :color="getPaymentMethodColor(item.metode)" size="small">
             {{ getPaymentMethodLabel(item.metode) }}
           </v-chip>
         </template>
-        
+
         <template v-slot:item.actions="{ item }">
           <v-btn
             icon
@@ -121,17 +120,23 @@
           <v-icon class="mr-2">mdi-credit-card-plus</v-icon>
           Proses Pembayaran
         </v-card-title>
-        
+
         <v-card-text class="pa-6" v-if="selectedTransaction">
           <div class="mb-4">
             <h4>Detail Transaksi</h4>
             <p><strong>ID:</strong> {{ selectedTransaction.id }}</p>
-            <p><strong>Total:</strong> {{ formatCurrency(selectedTransaction.total) }}</p>
-            <p><strong>Tanggal:</strong> {{ formatDate(selectedTransaction.tanggal) }}</p>
+            <p>
+              <strong>Total:</strong>
+              {{ formatCurrency(selectedTransaction.total) }}
+            </p>
+            <p>
+              <strong>Tanggal:</strong>
+              {{ formatDate(selectedTransaction.tanggal) }}
+            </p>
           </div>
-          
+
           <v-divider class="mb-4"></v-divider>
-          
+
           <v-form ref="paymentForm" v-model="paymentFormValid">
             <v-select
               v-model="paymentData.metode"
@@ -144,7 +149,7 @@
               dense
               class="mb-3"
             ></v-select>
-            
+
             <v-text-field
               v-model="paymentData.jumlah"
               label="Jumlah Pembayaran"
@@ -155,7 +160,7 @@
               class="mb-3"
               prefix="Rp"
             ></v-text-field>
-            
+
             <v-textarea
               v-model="paymentData.keterangan"
               label="Keterangan (Opsional)"
@@ -165,14 +170,10 @@
             ></v-textarea>
           </v-form>
         </v-card-text>
-        
+
         <v-card-actions class="pa-4">
           <v-spacer></v-spacer>
-          <v-btn
-            color="grey"
-            variant="text"
-            @click="closePaymentDialog"
-          >
+          <v-btn color="grey" variant="text" @click="closePaymentDialog">
             Batal
           </v-btn>
           <v-btn
@@ -194,30 +195,34 @@
           <v-icon class="mr-2">mdi-information</v-icon>
           Detail Pembayaran
         </v-card-title>
-        
+
         <v-card-text class="pa-4" v-if="selectedPayment">
           <v-row>
             <v-col cols="12">
               <strong>ID Pembayaran:</strong> {{ selectedPayment.id }}
             </v-col>
             <v-col cols="12">
-              <strong>ID Transaksi:</strong> {{ selectedPayment.transaction_id }}
+              <strong>ID Transaksi:</strong>
+              {{ selectedPayment.transaction_id }}
             </v-col>
             <v-col cols="6">
-              <strong>Metode:</strong> {{ getPaymentMethodLabel(selectedPayment.metode) }}
+              <strong>Metode:</strong>
+              {{ getPaymentMethodLabel(selectedPayment.metode) }}
             </v-col>
             <v-col cols="6">
-              <strong>Jumlah:</strong> {{ formatCurrency(selectedPayment.jumlah) }}
+              <strong>Jumlah:</strong>
+              {{ formatCurrency(selectedPayment.jumlah) }}
             </v-col>
             <v-col cols="12">
-              <strong>Tanggal:</strong> {{ formatDate(selectedPayment.tanggal) }}
+              <strong>Tanggal:</strong>
+              {{ formatDate(selectedPayment.tanggal) }}
             </v-col>
             <v-col cols="12" v-if="selectedPayment.keterangan">
               <strong>Keterangan:</strong> {{ selectedPayment.keterangan }}
             </v-col>
           </v-row>
         </v-card-text>
-        
+
         <v-card-actions class="pa-4">
           <v-spacer></v-spacer>
           <v-btn color="grey" variant="text" @click="detailDialog = false">
@@ -228,213 +233,218 @@
     </v-dialog>
 
     <!-- Snackbar -->
-    <v-snackbar
-      v-model="snackbar.show"
-      :color="snackbar.color"
-      :timeout="3000"
-    >
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="3000">
       {{ snackbar.message }}
     </v-snackbar>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { usePaymentStore } from '@/stores/payments'
-import { useTransactionStore } from '@/stores/transactions'
+import { ref, onMounted, computed } from "vue";
+import { usePaymentStore } from "@/stores/payments";
+import { useTransactionStore } from "@/stores/transactions";
 
-const paymentStore = usePaymentStore()
-const transactionStore = useTransactionStore()
+const paymentStore = usePaymentStore();
+const transactionStore = useTransactionStore();
 
 // Data
-const loadingPending = ref(false)
-const loadingPayments = ref(false)
-const processingPayment = ref(false)
-const paymentDialog = ref(false)
-const detailDialog = ref(false)
-const paymentFormValid = ref(false)
+const loadingPending = ref(false);
+const loadingPayments = ref(false);
+const processingPayment = ref(false);
+const paymentDialog = ref(false);
+const detailDialog = ref(false);
+const paymentFormValid = ref(false);
 
-const selectedTransaction = ref(null)
-const selectedPayment = ref(null)
+const selectedTransaction = ref(null);
+const selectedPayment = ref(null);
 
 const paymentData = ref({
-  metode: '',
+  metode: "",
   jumlah: 0,
-  keterangan: ''
-})
+  keterangan: "",
+});
 
 const snackbar = ref({
   show: false,
-  message: '',
-  color: 'success'
-})
+  message: "",
+  color: "success",
+});
 
 // Computed
-const pendingTransactions = computed(() => 
-  transactionStore.transactions.filter(t => t.status === 'pending')
-)
-const payments = computed(() => paymentStore.payments)
+const pendingTransactions = computed(() =>
+  transactionStore.transactions.filter((t) => t.status === "pending")
+);
+const payments = computed(() => paymentStore.payments);
 
 // Table headers
 const pendingHeaders = [
-  { title: 'ID Transaksi', key: 'id', sortable: true },
-  { title: 'Tanggal', key: 'tanggal', sortable: true },
-  { title: 'Total', key: 'total', sortable: true },
-  { title: 'Aksi', key: 'actions', sortable: false, align: 'center' }
-]
+  { title: "ID Transaksi", key: "id", sortable: true },
+  { title: "Tanggal", key: "tanggal", sortable: true },
+  { title: "Total", key: "total", sortable: true },
+  { title: "Aksi", key: "actions", sortable: false, align: "center" },
+];
 
 const paymentHeaders = [
-  { title: 'ID Transaksi', key: 'transaction_id', sortable: true },
-  { title: 'Metode', key: 'metode', sortable: true },
-  { title: 'Jumlah', key: 'jumlah', sortable: true },
-  { title: 'Tanggal', key: 'tanggal', sortable: true },
-  { title: 'Aksi', key: 'actions', sortable: false, align: 'center' }
-]
+  { title: "ID Transaksi", key: "transaction_id", sortable: true },
+  { title: "Metode", key: "metode", sortable: true },
+  { title: "Jumlah", key: "jumlah", sortable: true },
+  { title: "Tanggal", key: "tanggal", sortable: true },
+  { title: "Aksi", key: "actions", sortable: false, align: "center" },
+];
 
 // Options
 const paymentMethods = [
-  { text: 'Tunai', value: 'cash' },
-  { text: 'Transfer Bank', value: 'transfer' },
-  { text: 'Kartu Kredit', value: 'credit_card' },
-  { text: 'Kartu Debit', value: 'debit_card' },
-  { text: 'E-Wallet', value: 'ewallet' }
-]
+  { text: "Tunai", value: "cash" },
+  { text: "Transfer Bank", value: "transfer" },
+  { text: "Kartu Kredit", value: "credit_card" },
+  { text: "Kartu Debit", value: "debit_card" },
+  { text: "E-Wallet", value: "ewallet" },
+];
 
 // Validation rules
 const rules = {
-  required: value => !!value || 'Field ini wajib diisi',
-  minAmount: value => (value > 0) || 'Jumlah harus lebih dari 0'
-}
+  required: (value) => !!value || "Field ini wajib diisi",
+  minAmount: (value) => value > 0 || "Jumlah harus lebih dari 0",
+};
 
 // Methods
 const fetchData = async () => {
   try {
-    loadingPending.value = true
-    loadingPayments.value = true
-    
+    loadingPending.value = true;
+    loadingPayments.value = true;
+
     await Promise.all([
       transactionStore.fetchTransactions(),
-      paymentStore.fetchPayments()
-    ])
+      paymentStore.fetchPayments(),
+    ]);
   } catch (error) {
-    showSnackbar('Gagal memuat data', 'error')
+    showSnackbar("Gagal memuat data", "error");
   } finally {
-    loadingPending.value = false
-    loadingPayments.value = false
+    loadingPending.value = false;
+    loadingPayments.value = false;
   }
-}
+};
 
 const openAddPaymentDialog = () => {
   // This opens dialog to select pending transaction manually
-  paymentDialog.value = true
-}
+  paymentDialog.value = true;
+};
 
 const processPayment = (transaction) => {
-  selectedTransaction.value = transaction
+  selectedTransaction.value = transaction;
   paymentData.value = {
-    metode: '',
+    metode: "",
     jumlah: transaction.total,
-    keterangan: ''
-  }
-  paymentDialog.value = true
-}
+    keterangan: "",
+  };
+  paymentDialog.value = true;
+};
 
 const closePaymentDialog = () => {
-  paymentDialog.value = false
-  selectedTransaction.value = null
+  paymentDialog.value = false;
+  selectedTransaction.value = null;
   paymentData.value = {
-    metode: '',
+    metode: "",
     jumlah: 0,
-    keterangan: ''
-  }
-}
+    keterangan: "",
+  };
+};
 
 const submitPayment = async () => {
   try {
-    processingPayment.value = true
-    
+    processingPayment.value = true;
+
     await paymentStore.createPayment({
       transaction_id: selectedTransaction.value.id,
-      ...paymentData.value
-    })
-    
+      ...paymentData.value,
+    });
+
     // Update transaction status to completed
-    await transactionStore.updateTransactionStatus(selectedTransaction.value.id, 'selesai')
-    
-    showSnackbar('Pembayaran berhasil diproses')
-    closePaymentDialog()
-    await fetchData()
+    await transactionStore.updateTransactionStatus(
+      selectedTransaction.value.id,
+      "selesai"
+    );
+
+    showSnackbar("Pembayaran berhasil diproses");
+    closePaymentDialog();
+    await fetchData();
   } catch (error) {
-    showSnackbar('Gagal memproses pembayaran', 'error')
+    showSnackbar("Gagal memproses pembayaran", "error");
   } finally {
-    processingPayment.value = false
+    processingPayment.value = false;
   }
-}
+};
 
 const cancelTransaction = async (transaction) => {
   try {
-    await transactionStore.updateTransactionStatus(transaction.id, 'batal')
-    showSnackbar('Transaksi berhasil dibatalkan')
-    await fetchData()
+    await transactionStore.updateTransactionStatus(transaction.id, "batal");
+    showSnackbar("Transaksi berhasil dibatalkan");
+    await fetchData();
   } catch (error) {
-    showSnackbar('Gagal membatalkan transaksi', 'error')
+    showSnackbar("Gagal membatalkan transaksi", "error");
   }
-}
+};
 
 const viewPaymentDetails = (payment) => {
-  selectedPayment.value = payment
-  detailDialog.value = true
-}
+  selectedPayment.value = payment;
+  detailDialog.value = true;
+};
 
 const getPaymentMethodColor = (method) => {
   switch (method) {
-    case 'cash': return 'success'
-    case 'transfer': return 'primary'
-    case 'credit_card': return 'warning'
-    case 'debit_card': return 'info'
-    case 'ewallet': return 'purple'
-    default: return 'grey'
+    case "cash":
+      return "success";
+    case "transfer":
+      return "primary";
+    case "credit_card":
+      return "warning";
+    case "debit_card":
+      return "info";
+    case "ewallet":
+      return "purple";
+    default:
+      return "grey";
   }
-}
+};
 
 const getPaymentMethodLabel = (method) => {
   const methods = {
-    cash: 'Tunai',
-    transfer: 'Transfer',
-    credit_card: 'Kartu Kredit',
-    debit_card: 'Kartu Debit',
-    ewallet: 'E-Wallet'
-  }
-  return methods[method] || method
-}
+    cash: "Tunai",
+    transfer: "Transfer",
+    credit_card: "Kartu Kredit",
+    debit_card: "Kartu Debit",
+    ewallet: "E-Wallet",
+  };
+  return methods[method] || method;
+};
 
 const formatDate = (date) => {
-  if (!date) return '-'
+  if (!date) return "-";
   if (date.seconds) {
-    return new Date(date.seconds * 1000).toLocaleDateString('id-ID')
+    return new Date(date.seconds * 1000).toLocaleDateString("id-ID");
   }
-  return new Date(date).toLocaleDateString('id-ID')
-}
+  return new Date(date).toLocaleDateString("id-ID");
+};
 
 const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR'
-  }).format(amount)
-}
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  }).format(amount);
+};
 
-const showSnackbar = (message, color = 'success') => {
+const showSnackbar = (message, color = "success") => {
   snackbar.value = {
     show: true,
     message,
-    color
-  }
-}
+    color,
+  };
+};
 
 // Lifecycle
 onMounted(() => {
-  fetchData()
-})
+  fetchData();
+});
 </script>
 
 <style scoped>

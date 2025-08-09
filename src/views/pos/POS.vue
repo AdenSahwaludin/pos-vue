@@ -678,7 +678,7 @@ const processPayment = async () => {
           amount: paymentAmount.value,
           change: change.value,
           method: paymentMethod.value,
-        }
+        },
       };
 
       const transactionData = {
@@ -716,7 +716,7 @@ const processPayment = async () => {
 
 const printReceipt = () => {
   if (!receiptData.value) {
-    console.error('No receipt data available');
+    console.error("No receipt data available");
     return;
   }
 

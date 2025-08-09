@@ -152,11 +152,11 @@ export const useTransactionStore = defineStore("transactions", () => {
         customerPart = customerId;
       } else {
         // Otherwise format it properly
-        const numericId = parseInt(customerId.replace(/\D/g, '')) || 1;
-        customerPart = `P${String(numericId).padStart(6, '0')}`;
+        const numericId = parseInt(customerId.replace(/\D/g, "")) || 1;
+        customerPart = `P${String(numericId).padStart(6, "0")}`;
       }
     }
-    
+
     return `INV-${year}-${month}-${sequence}-${customerPart}`;
   };
 
@@ -192,7 +192,7 @@ export const useTransactionStore = defineStore("transactions", () => {
       for (const item of cart.value) {
         // Generate auto-increment ID for transaction detail
         const detailId = await generateTransactionDetailId();
-        
+
         const detailRef = doc(db, "transaction_details", String(detailId));
         batch.set(detailRef, {
           id: detailId,
@@ -214,11 +214,11 @@ export const useTransactionStore = defineStore("transactions", () => {
 
       // Create payment record
       const paymentRef = doc(collection(db, "payments"));
-      
+
       // Generate proper payment ID: PAY-YYYYMMDD-0000001
       const today = new Date();
-      const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');
-      
+      const dateStr = today.toISOString().slice(0, 10).replace(/-/g, "");
+
       // Get today's payment count for sequence
       const startOfDay = new Date(today);
       startOfDay.setHours(0, 0, 0, 0);
@@ -230,11 +230,11 @@ export const useTransactionStore = defineStore("transactions", () => {
         where("tanggal", ">=", startOfDay),
         where("tanggal", "<=", endOfDay)
       );
-      
+
       const paymentSnapshot = await getDocs(paymentQuery);
-      const paymentSequence = String(paymentSnapshot.size + 1).padStart(7, '0');
+      const paymentSequence = String(paymentSnapshot.size + 1).padStart(7, "0");
       const paymentId = `PAY-${dateStr}-${paymentSequence}`;
-      
+
       batch.set(paymentRef, {
         id: paymentId,
         transaction_id: transactionId, // Use the generated transaction ID

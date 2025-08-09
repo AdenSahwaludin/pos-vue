@@ -54,7 +54,7 @@
               </v-list-item>
             </v-list>
           </v-menu>
-          
+
           <!-- Regular Menu Items -->
           <v-btn
             v-else
@@ -90,7 +90,7 @@
             }}</v-list-item-subtitle>
           </v-list-item>
           <v-divider></v-divider>
-          
+
           <!-- Admin Settings -->
           <v-list-item v-if="authStore.isAdmin" to="/admin/settings">
             <template v-slot:prepend>
@@ -98,16 +98,16 @@
             </template>
             <v-list-item-title>Pengaturan</v-list-item-title>
           </v-list-item>
-          
+
           <v-list-item v-if="authStore.isAdmin" to="/admin/import-data">
             <template v-slot:prepend>
               <v-icon color="success">mdi-database-import</v-icon>
             </template>
             <v-list-item-title>Import Data</v-list-item-title>
           </v-list-item>
-          
+
           <v-divider v-if="authStore.isAdmin"></v-divider>
-          
+
           <v-list-item @click="logout">
             <template v-slot:prepend>
               <v-icon color="error">mdi-logout</v-icon>
@@ -157,7 +157,7 @@
                   <v-list-item-title>{{ item.title }}</v-list-item-title>
                 </v-list-item>
               </template>
-              
+
               <v-list-item
                 v-for="child in item.children"
                 :key="child.title"
@@ -173,7 +173,7 @@
               </v-list-item>
             </v-list-group>
           </div>
-          
+
           <!-- Regular items -->
           <v-list-item
             v-else-if="!item.dropdown"
@@ -261,8 +261,13 @@ const navigationItems = [
     dropdown: true,
     children: [
       { title: "Produk", icon: "mdi-package-variant", to: "/products" },
-      { title: "Kategori", icon: "mdi-tag-multiple", to: "/categories", adminOnly: true },
-    ]
+      {
+        title: "Kategori",
+        icon: "mdi-tag-multiple",
+        to: "/categories",
+        adminOnly: true,
+      },
+    ],
   },
   { title: "Pelanggan", icon: "mdi-account-group", to: "/customers" },
   {
@@ -271,10 +276,14 @@ const navigationItems = [
     to: null,
     dropdown: true,
     children: [
-      { title: "Daftar Transaksi", icon: "mdi-receipt-text", to: "/transactions" },
+      {
+        title: "Daftar Transaksi",
+        icon: "mdi-receipt-text",
+        to: "/transactions",
+      },
       { title: "Riwayat Penjualan", icon: "mdi-history", to: "/sales-history" },
       { title: "Pembayaran", icon: "mdi-credit-card", to: "/payments" },
-    ]
+    ],
   },
   { title: "Laporan", icon: "mdi-chart-line", to: "/reports", adminOnly: true },
   {
@@ -289,14 +298,16 @@ const navigationItems = [
 const visibleNavigationItems = computed(() => {
   const flattenItems = (items) => {
     const result = [];
-    items.forEach(item => {
+    items.forEach((item) => {
       if (item.dropdown && item.children) {
         // For dropdown items, add the parent with its children
-        const filteredChildren = item.children.filter(child => !child.adminOnly || authStore.isAdmin);
+        const filteredChildren = item.children.filter(
+          (child) => !child.adminOnly || authStore.isAdmin
+        );
         if (filteredChildren.length > 0) {
           result.push({
             ...item,
-            children: filteredChildren
+            children: filteredChildren,
           });
         }
       } else if (!item.adminOnly || authStore.isAdmin) {
@@ -305,7 +316,7 @@ const visibleNavigationItems = computed(() => {
     });
     return result;
   };
-  
+
   return flattenItems(navigationItems).slice(0, 6); // Limit to 6 items for desktop
 });
 

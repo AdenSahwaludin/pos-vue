@@ -189,7 +189,11 @@
             hide-default-footer
           >
             <template v-slot:item.product_name="{ item }">
-              {{ item.product?.nama || item.product_name || 'Produk tidak ditemukan' }}
+              {{
+                item.product?.nama ||
+                item.product_name ||
+                "Produk tidak ditemukan"
+              }}
             </template>
 
             <template v-slot:item.harga_satuan="{ item }">
@@ -416,7 +420,9 @@ const viewTransactionDetails = async (transaction) => {
 const loadTransactionDetails = async (transactionId) => {
   try {
     loadingDetails.value = true;
-    transactionDetails.value = await transactionStore.getTransactionDetails(transactionId);
+    transactionDetails.value = await transactionStore.getTransactionDetails(
+      transactionId
+    );
   } catch (error) {
     console.error("Error loading transaction details:", error);
   } finally {
