@@ -205,12 +205,40 @@
               </v-col>
 
               <v-col cols="12">
-                <v-text-field
-                  v-model="productData.gambar"
-                  label="URL Gambar (Opsional)"
+                <v-file-input
+                  v-model="productData.gambarFile"
+                  label="Upload Gambar Produk (Opsional)"
                   variant="outlined"
-                  hint="Masukkan URL gambar produk"
-                ></v-text-field>
+                  accept="image/png,image/jpg,image/jpeg,image/webp"
+                  prepend-icon="mdi-camera"
+                  show-size
+                  hint="Format yang didukung: PNG, JPG, JPEG, WebP (Max: 5MB)"
+                  @update:model-value="handleImageUpload"
+                ></v-file-input>
+
+                <!-- Image Preview -->
+                <div v-if="imagePreview || productData.gambar" class="mt-3">
+                  <v-img
+                    :src="imagePreview || productData.gambar"
+                    max-width="200"
+                    max-height="200"
+                    class="mx-auto"
+                    contain
+                  >
+                    <template v-slot:placeholder>
+                      <v-row
+                        class="fill-height ma-0"
+                        align="center"
+                        justify="center"
+                      >
+                        <v-progress-circular
+                          indeterminate
+                          color="grey lighten-5"
+                        ></v-progress-circular>
+                      </v-row>
+                    </template>
+                  </v-img>
+                </div>
               </v-col>
             </v-row>
           </v-form>
@@ -298,9 +326,11 @@ const defaultProductData = {
   batas_stok: 5,
   nomor_bpom: "",
   gambar: "",
+  gambarFile: null,
 };
 
 const productData = ref({ ...defaultProductData });
+const imagePreview = ref(null);
 
 // Computed properties
 const categoryFilterItems = computed(() => [
@@ -361,6 +391,7 @@ const getStockColor = (product) => {
 const editProduct = (product) => {
   editingProduct.value = product;
   productData.value = { ...product };
+  imagePreview.value = product.gambar || null;
   showProductDialog.value = true;
 };
 
@@ -373,6 +404,91 @@ const cancelProductDialog = () => {
   showProductDialog.value = false;
   editingProduct.value = null;
   productData.value = { ...defaultProductData };
+  imagePreview.value = null;
+};
+
+const handleImageUpload = (files) => {
+  console.log('Files received:', files); // Debug log
+  
+  if (!files || (Array.isArray(files) && files.length === 0)) {
+    imagePreview.value = null;
+    return;
+  }
+
+  // Get the first file from array or single file
+  const selectedFile = Array.isArray(files) ? files[0] : files;
+  
+  if (!selectedFile) {
+    imagePreview.value = null;
+    return;
+  }
+
+  console.log('Selected file:', selectedFile); // Debug log
+  console.log('File type:', selectedFile.type); // Debug log
+  console.log('File size:', selectedFile.size); // Debug log
+  
+  // Validate file size (5MB max)
+  if (selectedFile.size > 5 * 1024 * 1024) {
+    alert('Ukuran file terlalu besar. Maksimal 5MB.');
+    productData.value.gambarFile = null;
+    imagePreview.value = null;
+    return;
+  }
+
+  // Validate file type - be more flexible with MIME types
+  const allowedTypes = [
+    'image/png', 
+    'image/jpg', 
+    'image/jpeg', 
+    'image/webp',
+    'image/PNG',
+    'image/JPG',
+    'image/JPEG',
+    'image/WEBP'
+  ];
+  
+  // Also check file extension as fallback
+  const fileName = selectedFile.name.toLowerCase();
+  const allowedExtensions = ['.png', '.jpg', '.jpeg', '.webp'];
+  const hasValidExtension = allowedExtensions.some(ext => fileName.endsWith(ext));
+  
+  if (!allowedTypes.includes(selectedFile.type) && !hasValidExtension) {
+    console.log('File type detected:', selectedFile.type);
+    console.log('File name:', selectedFile.name);
+    alert(`Format file tidak didukung. File type: ${selectedFile.type}. Gunakan PNG, JPG, JPEG, atau WebP.`);
+    productData.value.gambarFile = null;
+    imagePreview.value = null;
+    return;
+  }
+
+  // Create preview
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    imagePreview.value = e.target.result;
+  };
+  reader.onerror = (error) => {
+    console.error('Error reading file:', error);
+    alert('Error membaca file gambar.');
+  };
+  reader.readAsDataURL(selectedFile);
+};
+
+const uploadImageToStorage = async (file) => {
+  if (!file) return null;
+  
+  try {
+    // Convert file to base64 for simple storage
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        resolve(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    });
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    return null;
+  }
 };
 
 const saveProduct = async () => {
@@ -380,13 +496,34 @@ const saveProduct = async () => {
 
   if (valid) {
     try {
+      let imageUrl = productData.value.gambar;
+      
+      // Upload new image if file is selected
+      if (productData.value.gambarFile) {
+        const file = Array.isArray(productData.value.gambarFile) 
+          ? productData.value.gambarFile[0] 
+          : productData.value.gambarFile;
+        
+        if (file) {
+          imageUrl = await uploadImageToStorage(file);
+        }
+      }
+
+      const productToSave = {
+        ...productData.value,
+        gambar: imageUrl || productData.value.gambar,
+      };
+      
+      // Remove the file property before saving to database
+      delete productToSave.gambarFile;
+
       if (editingProduct.value) {
         await productStore.updateProduct(
           editingProduct.value.id,
-          productData.value
+          productToSave
         );
       } else {
-        await productStore.addProduct(productData.value);
+        await productStore.addProduct(productToSave);
       }
 
       cancelProductDialog();
