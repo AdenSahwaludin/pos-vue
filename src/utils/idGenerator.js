@@ -111,10 +111,9 @@ export const generateProductEAN13 = async (categoryId = "001") => {
     const countryCode = "890"; // Indonesia
     const manufacturerCode = String(categoryId).padStart(4, "0");
 
-    // Get next product sequence for this category
+    // Get next product sequence - simplified query to avoid index issues
     const q = query(
       collection(db, "products"),
-      where("category_id", "==", categoryId),
       orderBy("id", "desc"),
       limit(1)
     );
@@ -123,13 +122,27 @@ export const generateProductEAN13 = async (categoryId = "001") => {
     let nextSequence = 1;
 
     if (!snapshot.empty) {
-      const lastDoc = snapshot.docs[0];
-      const lastId = lastDoc.data().id || lastDoc.id;
+      // Look for products with the same category prefix
+      const allProducts = await getDocs(collection(db, "products"));
+      const categoryProducts = allProducts.docs.filter(doc => {
+        const productId = doc.data().id || doc.id;
+        const productCategory = doc.data().category_id;
+        return productCategory === categoryId && productId.length === 13;
+      });
 
-      // Extract sequence from EAN-13
-      if (lastId.length === 13) {
-        const sequencePart = lastId.substring(7, 12);
-        nextSequence = parseInt(sequencePart) + 1;
+      if (categoryProducts.length > 0) {
+        let maxSequence = 0;
+        categoryProducts.forEach(doc => {
+          const productId = doc.data().id || doc.id;
+          if (productId.length === 13) {
+            const sequencePart = productId.substring(7, 12);
+            const sequence = parseInt(sequencePart);
+            if (!isNaN(sequence) && sequence > maxSequence) {
+              maxSequence = sequence;
+            }
+          }
+        });
+        nextSequence = maxSequence + 1;
       }
     }
 

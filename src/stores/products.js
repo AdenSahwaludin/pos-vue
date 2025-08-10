@@ -5,6 +5,7 @@ import {
   collection,
   doc,
   addDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
   getDocs,
@@ -75,7 +76,7 @@ export const useProductStore = defineStore("products", () => {
 
       // Use the generated ID as the document ID
       const docRef = doc(db, "categories", String(categoryId));
-      await addDoc(docRef, categoryWithId);
+      await setDoc(docRef, categoryWithId);
 
       const newCategory = { ...categoryWithId };
       categories.value.push(newCategory);
@@ -140,7 +141,7 @@ export const useProductStore = defineStore("products", () => {
 
       // Use the generated EAN-13 as the document ID
       const docRef = doc(db, "products", ean13Id);
-      await addDoc(docRef, productWithId);
+      await setDoc(docRef, productWithId);
 
       const newProduct = { ...productWithId };
       products.value.push(newProduct);

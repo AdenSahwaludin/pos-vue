@@ -408,8 +408,8 @@ const cancelProductDialog = () => {
 };
 
 const handleImageUpload = (files) => {
-  console.log('Files received:', files); // Debug log
-  
+  console.log("Files received:", files); // Debug log
+
   if (!files || (Array.isArray(files) && files.length === 0)) {
     imagePreview.value = null;
     return;
@@ -417,19 +417,19 @@ const handleImageUpload = (files) => {
 
   // Get the first file from array or single file
   const selectedFile = Array.isArray(files) ? files[0] : files;
-  
+
   if (!selectedFile) {
     imagePreview.value = null;
     return;
   }
 
-  console.log('Selected file:', selectedFile); // Debug log
-  console.log('File type:', selectedFile.type); // Debug log
-  console.log('File size:', selectedFile.size); // Debug log
-  
+  console.log("Selected file:", selectedFile); // Debug log
+  console.log("File type:", selectedFile.type); // Debug log
+  console.log("File size:", selectedFile.size); // Debug log
+
   // Validate file size (5MB max)
   if (selectedFile.size > 5 * 1024 * 1024) {
-    alert('Ukuran file terlalu besar. Maksimal 5MB.');
+    alert("Ukuran file terlalu besar. Maksimal 5MB.");
     productData.value.gambarFile = null;
     imagePreview.value = null;
     return;
@@ -437,25 +437,29 @@ const handleImageUpload = (files) => {
 
   // Validate file type - be more flexible with MIME types
   const allowedTypes = [
-    'image/png', 
-    'image/jpg', 
-    'image/jpeg', 
-    'image/webp',
-    'image/PNG',
-    'image/JPG',
-    'image/JPEG',
-    'image/WEBP'
+    "image/png",
+    "image/jpg",
+    "image/jpeg",
+    "image/webp",
+    "image/PNG",
+    "image/JPG",
+    "image/JPEG",
+    "image/WEBP",
   ];
-  
+
   // Also check file extension as fallback
   const fileName = selectedFile.name.toLowerCase();
-  const allowedExtensions = ['.png', '.jpg', '.jpeg', '.webp'];
-  const hasValidExtension = allowedExtensions.some(ext => fileName.endsWith(ext));
-  
+  const allowedExtensions = [".png", ".jpg", ".jpeg", ".webp"];
+  const hasValidExtension = allowedExtensions.some((ext) =>
+    fileName.endsWith(ext)
+  );
+
   if (!allowedTypes.includes(selectedFile.type) && !hasValidExtension) {
-    console.log('File type detected:', selectedFile.type);
-    console.log('File name:', selectedFile.name);
-    alert(`Format file tidak didukung. File type: ${selectedFile.type}. Gunakan PNG, JPG, JPEG, atau WebP.`);
+    console.log("File type detected:", selectedFile.type);
+    console.log("File name:", selectedFile.name);
+    alert(
+      `Format file tidak didukung. File type: ${selectedFile.type}. Gunakan PNG, JPG, JPEG, atau WebP.`
+    );
     productData.value.gambarFile = null;
     imagePreview.value = null;
     return;
@@ -467,15 +471,15 @@ const handleImageUpload = (files) => {
     imagePreview.value = e.target.result;
   };
   reader.onerror = (error) => {
-    console.error('Error reading file:', error);
-    alert('Error membaca file gambar.');
+    console.error("Error reading file:", error);
+    alert("Error membaca file gambar.");
   };
   reader.readAsDataURL(selectedFile);
 };
 
 const uploadImageToStorage = async (file) => {
   if (!file) return null;
-  
+
   try {
     // Convert file to base64 for simple storage
     return new Promise((resolve) => {
@@ -486,7 +490,7 @@ const uploadImageToStorage = async (file) => {
       reader.readAsDataURL(file);
     });
   } catch (error) {
-    console.error('Error uploading image:', error);
+    console.error("Error uploading image:", error);
     return null;
   }
 };
@@ -518,22 +522,23 @@ const saveProduct = async () => {
       delete productToSave.gambarFile;
 
       if (editingProduct.value) {
+        // For updating, use the existing product ID
         await productStore.updateProduct(
           editingProduct.value.id,
           productToSave
         );
       } else {
+        // For new product, let the store generate the ID
         await productStore.addProduct(productToSave);
       }
 
       cancelProductDialog();
     } catch (error) {
       console.error("Save product failed:", error);
+      alert("Gagal menyimpan produk. Silakan coba lagi.");
     }
   }
-};
-
-const confirmDelete = async () => {
+};const confirmDelete = async () => {
   try {
     await productStore.deleteProduct(productToDelete.value.id);
     showDeleteDialog.value = false;
