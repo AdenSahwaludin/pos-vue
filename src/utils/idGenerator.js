@@ -124,7 +124,7 @@ export const generateProductEAN13 = async (categoryId = "001") => {
     if (!snapshot.empty) {
       // Look for products with the same category prefix
       const allProducts = await getDocs(collection(db, "products"));
-      const categoryProducts = allProducts.docs.filter(doc => {
+      const categoryProducts = allProducts.docs.filter((doc) => {
         const productId = doc.data().id || doc.id;
         const productCategory = doc.data().category_id;
         return productCategory === categoryId && productId.length === 13;
@@ -132,7 +132,7 @@ export const generateProductEAN13 = async (categoryId = "001") => {
 
       if (categoryProducts.length > 0) {
         let maxSequence = 0;
-        categoryProducts.forEach(doc => {
+        categoryProducts.forEach((doc) => {
           const productId = doc.data().id || doc.id;
           if (productId.length === 13) {
             const sequencePart = productId.substring(7, 12);

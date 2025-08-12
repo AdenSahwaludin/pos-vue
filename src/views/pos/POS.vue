@@ -106,7 +106,7 @@
                 <div class="product-image-container">
                   <v-img
                     :src="product.gambar || '/placeholder-product.jpg'"
-                    height="120"
+                    height="100%"
                     cover
                     class="product-image"
                   >
@@ -981,17 +981,26 @@ computed(() => {
   box-shadow: none !important;
 }
 
+/* Ensure product images are square */
 .product-image-container {
   position: relative;
   overflow: hidden;
   border-radius: 12px 12px 0 0;
+  width: 100%;
+  padding-top: 100%; /* 1:1 aspect ratio */
 }
 
 .product-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   transition: transform 0.3s ease;
 }
 
-.product-card:hover .product-image {
+.product-image:hover {
   transform: scale(1.05);
 }
 

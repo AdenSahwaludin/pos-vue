@@ -501,13 +501,13 @@ const saveProduct = async () => {
   if (valid) {
     try {
       let imageUrl = productData.value.gambar;
-      
+
       // Upload new image if file is selected
       if (productData.value.gambarFile) {
-        const file = Array.isArray(productData.value.gambarFile) 
-          ? productData.value.gambarFile[0] 
+        const file = Array.isArray(productData.value.gambarFile)
+          ? productData.value.gambarFile[0]
           : productData.value.gambarFile;
-        
+
         if (file) {
           imageUrl = await uploadImageToStorage(file);
         }
@@ -517,7 +517,7 @@ const saveProduct = async () => {
         ...productData.value,
         gambar: imageUrl || productData.value.gambar,
       };
-      
+
       // Remove the file property before saving to database
       delete productToSave.gambarFile;
 
@@ -538,7 +538,8 @@ const saveProduct = async () => {
       alert("Gagal menyimpan produk. Silakan coba lagi.");
     }
   }
-};const confirmDelete = async () => {
+};
+const confirmDelete = async () => {
   try {
     await productStore.deleteProduct(productToDelete.value.id);
     showDeleteDialog.value = false;
